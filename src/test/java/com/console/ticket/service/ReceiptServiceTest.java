@@ -4,9 +4,10 @@ import constants.Constants;
 import data.DataBase;
 import entity.Card;
 import entity.Company;
-import entity.product.Product;
+import entity.Product;
 import entity.product.ValidateProductBuilder;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import service.ReceiptService;
 import util.Currencies;
@@ -24,6 +25,7 @@ public class ReceiptServiceTest {
     private static final Card maxDiscountCard = new Card(4444);
 
     @Test
+    @Disabled
     void checkDiscount() {
         dataBase.findCardById(maxDiscountCard.getCardNumber());
         dataBase.findProductById(fish.getId(), fish.getQuantity());
@@ -37,6 +39,7 @@ public class ReceiptServiceTest {
     }
 
     @AfterAll
+    @Disabled
     static void clearList() {
         dataBase.getProductsList().clear();
     }

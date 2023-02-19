@@ -20,7 +20,7 @@ public class TicketRunner {
     }
 
     public void setCompany() {
-        company = new Company("Louis Vuitton", "101, avenue des Champs, 75008 Paris",
+        company = new Company("Evroopt", "Minsk, Kalvariyskaja 17, 1",
                 10, Currencies.USA.getCurrency());
     }
 

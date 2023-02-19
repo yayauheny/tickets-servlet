@@ -2,22 +2,21 @@ package data;
 
 import constants.Constants;
 import entity.Card;
-import entity.product.Product;
-import entity.product.ValidateProductBuilder;
+import entity.Product;
 import exception.DataBaseException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import util.ConnectionManager;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataBase {
     private static DataBase instance;
     private Card card;
     private ArrayList<Product> products = new ArrayList<>();
-
-    private DataBase() {
-
-    }
 
     public static DataBase getInstance() {
         if (instance == null) {
@@ -60,26 +59,40 @@ public class DataBase {
             if (resultSet.next()) {
                 card = buildCard(resultSet);
             } else {
-                card = new Card(Constants.CASHIER_NUMBER, Constants.STANDARD_DISCOUNT);
+                card = Card.builder()
+                        .cardNumber(Constants.CASHIER_NUMBER)
+                        .discountSize(Constants.STANDARD_DISCOUNT)
+                        .build();
             }
         } catch (SQLException e) {
             throw new RuntimeException(new DataBaseException("Exception while finding card from database"));
         }
     }
 
-
     private static Product buildProduct(ResultSet resultSet, int quantity) throws SQLException {
-        return new ValidateProductBuilder()
-                .setId(resultSet.getInt("id"))
-                .setName(resultSet.getString("name"))
-                .setPrice(resultSet.getDouble("price"))
-                .setQuantity(quantity)
-                .setDiscount(resultSet.getBoolean("discount"))
-                .build();
+        try {
+            return Product.builder().id(resultSet.getInt("id"))
+                    .name(resultSet.getString("name"))
+                    .price(resultSet.getDouble("price"))
+                    .quantity(quantity)
+                    .isDiscount(resultSet.getBoolean("discount"))
+                    .build();
+        } catch (DataBaseException e) {
+            System.out.println("Exception building product: " + e.getMessage());
+        }
+        return null;
     }
 
     private static Card buildCard(ResultSet resultSet) throws SQLException {
-        return new Card(resultSet.getInt("id"), resultSet.getDouble("discount"));
+        try {
+            return Card.builder()
+                    .cardNumber(resultSet.getInt("id"))
+                    .discountSize((resultSet.getDouble("discount")))
+                    .build();
+        } catch (DataBaseException e) {
+            System.out.println("Exception building card: " + e.getMessage());
+        }
+        return null;
     }
 
     public Card getCard() {

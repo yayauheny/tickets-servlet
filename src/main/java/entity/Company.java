@@ -1,7 +1,10 @@
 package entity;
 
-import util.Currencies;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Company {
     private String name;
     private String address;
@@ -13,37 +16,5 @@ public class Company {
         this.address = address;
         this.salePercent = salePercent;
         this.currency = currency;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public int getSalePercent() {
-        return salePercent;
-    }
-
-    public void setSalePercent(int salePercent) {
-        this.salePercent = salePercent;
     }
 }

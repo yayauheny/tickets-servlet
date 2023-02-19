@@ -5,6 +5,8 @@ import data.DataBase;
 import entity.Card;
 import entity.Company;
 import exception.DataBaseException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,10 +18,8 @@ import java.util.stream.Collectors;
 /**
  * Обработка введенных данных
  */
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConsoleInputService {
-    private ConsoleInputService() {
-    }
 
     public static void readConsole(Company company, DataBase dataBase) {
         System.out.print(Constants.MENU_MESSAGE);

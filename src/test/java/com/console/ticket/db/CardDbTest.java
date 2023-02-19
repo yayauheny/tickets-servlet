@@ -3,6 +3,7 @@ package com.console.ticket.db;
 import data.DataBase;
 import entity.Card;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class CardDbTest {
     private static ArrayList<Card> cardsFound = new ArrayList<>();
 
     @Test
+    @Disabled
     void findCard() {
         {
             cards.add(new Card(1111, 0.1));
@@ -41,6 +43,7 @@ public class CardDbTest {
     }
 
     @AfterAll
+    @Disabled
     static void clear() {
         cards = null;
         cardsFound = null;

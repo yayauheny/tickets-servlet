@@ -3,7 +3,7 @@ package service;
 import constants.Constants;
 import data.DataBase;
 import entity.Company;
-import entity.product.Product;
+import entity.Product;
 import util.DateTimeUtil;
 
 import java.time.format.DateTimeFormatter;
