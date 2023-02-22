@@ -1,7 +1,9 @@
-import data.DataBase;
-import entity.*;
-import service.ConsoleInputService;
-import util.Currencies;
+package com.console.ticket;
+
+import com.console.ticket.data.DataBase;
+import com.console.ticket.entity.Company;
+import com.console.ticket.service.ConsoleInputService;
+import com.console.ticket.util.Currencies;
 
 /**
  * @Author Evgeny Leshok

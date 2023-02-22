@@ -1,4 +1,4 @@
-package util;
+package com.console.ticket.util;
 
 /**
  * Валюты

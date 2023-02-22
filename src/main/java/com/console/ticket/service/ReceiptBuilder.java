@@ -1,14 +1,14 @@
-package service;
+package com.console.ticket.service;
 
-import constants.Constants;
-import data.DataBase;
-import entity.Company;
-import entity.Product;
-import util.DateTimeUtil;
+import com.console.ticket.constants.Constants;
+import com.console.ticket.data.DataBase;
+import com.console.ticket.entity.Product;
+import com.console.ticket.util.DateTimeUtil;
+import com.console.ticket.entity.Company;
 
 import java.time.format.DateTimeFormatter;
 
-public final class ReceiptService {
+public final class ReceiptBuilder {
     private static String RECEIPT;
 
     public static String buildReceipt(Company company, DataBase dataBase) {

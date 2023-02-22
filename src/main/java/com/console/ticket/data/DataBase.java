@@ -1,12 +1,12 @@
-package data;
+package com.console.ticket.data;
 
-import constants.Constants;
-import entity.Card;
-import entity.Product;
-import exception.DataBaseException;
+import com.console.ticket.constants.Constants;
+import com.console.ticket.entity.Card;
+import com.console.ticket.entity.Product;
+import com.console.ticket.exception.DataBaseException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import util.ConnectionManager;
+import com.console.ticket.util.ConnectionManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

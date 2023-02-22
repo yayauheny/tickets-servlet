@@ -1,6 +1,6 @@
-package constants;
+package com.console.ticket.constants;
 
-import util.Currencies;
+import com.console.ticket.util.Currencies;
 
 public final class Constants {
     public static String CURRENCY = Currencies.USA.getCurrency();
@@ -20,6 +20,10 @@ public final class Constants {
             """;
     public static String CARD_SELECT = """
             SELECT * FROM company.discount_card WHERE id = ?
+            """;
+
+    public static String CARDS_SELECT_ALL = """
+            SELECT * FROM company.discount_card
             """;
     public static String CREATE_TABLES = """
             CREATE SCHEMA IF NOT EXISTS company;

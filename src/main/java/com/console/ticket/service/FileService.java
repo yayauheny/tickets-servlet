@@ -1,8 +1,8 @@
-package service;
+package com.console.ticket.service;
 
 
-import constants.Constants;
-import exception.FileException;
+import com.console.ticket.constants.Constants;
+import com.console.ticket.exception.FileException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

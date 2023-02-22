@@ -1,4 +1,4 @@
-package util;
+package com.console.ticket.util;
 /**
  * Получение текущего времени (даты) по переданному паттерну
  *
@@ -19,7 +19,7 @@ public final class DateTimeUtil {
             return currentDateTime.now().format(formatter);
         } catch (DateTimeException e) {
             e.printStackTrace();
-            return "" + LocalDateTime.now();
+            return LocalDateTime.now().toString();
         }
     }
 }

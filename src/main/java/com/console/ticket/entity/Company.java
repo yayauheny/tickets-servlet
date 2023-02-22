@@ -1,4 +1,4 @@
-package entity;
+package com.console.ticket.entity;
 
 import lombok.Getter;
 import lombok.Setter;

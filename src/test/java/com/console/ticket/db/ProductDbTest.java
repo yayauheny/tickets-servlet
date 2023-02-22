@@ -1,7 +1,7 @@
 package com.console.ticket.db;
 
-import data.DataBase;
-import entity.Product;
+import com.console.ticket.data.DataBase;
+import com.console.ticket.entity.Product;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
-package service;
+package com.console.ticket.service;
 
-import constants.Constants;
-import data.DataBase;
-import entity.Card;
-import entity.Company;
-import exception.DataBaseException;
+import com.console.ticket.constants.Constants;
+import com.console.ticket.data.DataBase;
+import com.console.ticket.exception.DataBaseException;
+import com.console.ticket.entity.Card;
+import com.console.ticket.entity.Company;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -29,9 +29,9 @@ public final class ConsoleInputService {
                 line = bufferedReader.readLine();
                 if (!line.contains("exit") && !line.contains(".txt")) {
                     dataBase.setCard(findCardAndProducts(line.split(" "), dataBase));
-                    getReceipt(company, dataBase);
+                    printReceiptToConsole(company, dataBase);
                 } else if (line.contains(".txt")) {
-                    ReceiptService.readReceipt(line);
+                    ReceiptBuilder.readReceipt(line);
                 } else break;
             }
         } catch (IOException e) {
@@ -39,8 +39,8 @@ public final class ConsoleInputService {
         }
     }
 
-    private static void getReceipt(Company company, DataBase dataBase) {
-        System.out.println(ReceiptService.writeReceipt(company, dataBase));
+    private static void printReceiptToConsole(Company company, DataBase dataBase) {
+        System.out.println(ReceiptBuilder.writeReceipt(company, dataBase));
     }
 
     private static Card findCardAndProducts(String[] array, DataBase dataBase) {
@@ -59,7 +59,8 @@ public final class ConsoleInputService {
                 int quantity = Integer.parseInt(map.getValue());
                 dataBase.findProductById(Integer.parseInt(map.getKey()), quantity);
 
-            } catch (NumberFormatException e) {
+            } // TODO: refactor exception handling
+            catch (NumberFormatException e) {
                 throw new RuntimeException(new DataBaseException("Input data is invalid"));
             }
         }
