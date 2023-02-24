@@ -1,30 +1,18 @@
 package com.console.ticket.constants;
 
-import com.console.ticket.util.Currencies;
+import com.console.ticket.entity.Currency;
 
 public final class Constants {
-    public static String CURRENCY = Currencies.USA.getCurrency();
+    public static String CURRENCY = Currency.USA.getCurrency();
     public static int CASHIER_NUMBER = 0;
-    public static double TOTAL_SUM = 0;
     public static final int DISCOUNT_AFTER = 5;
-    public static double CARD_DISCOUNT;
-    public static double STANDARD_DISCOUNT = 0;
-    public static double PRODUCT_DISCOUNT;
+    public static double PRODUCT_DISCOUNT = 10;
     public static final String OUTPUT_LINE = "_______________________________________\n";
     public static String RECEIPT_MESSAGE = "Для вывода чека введите номер и количество товара, а также номер дисконтной карты";
     public static String READ_MESSAGE = "Для чтения чека введите путь к файлу";
     public static String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
     public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
-    public static String PRODUCTS_SELECT = """
-            SELECT * FROM company.product WHERE id = ?
-            """;
-    public static String CARD_SELECT = """
-            SELECT * FROM company.discount_card WHERE id = ?
-            """;
 
-    public static String CARDS_SELECT_ALL = """
-            SELECT * FROM company.discount_card
-            """;
     public static String CREATE_TABLES = """
             CREATE SCHEMA IF NOT EXISTS company;
             CREATE TABLE IF NOT EXISTS company.product

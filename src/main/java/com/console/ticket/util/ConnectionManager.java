@@ -1,6 +1,6 @@
 package com.console.ticket.util;
 
-import com.console.ticket.exception.DataBaseException;
+import com.console.ticket.exception.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,8 +21,9 @@ public final class ConnectionManager {
                     PropertiesUtil.get(USERNAME_KEY),
                     PropertiesUtil.get(PASSWORD_KEY));
         } catch (SQLException e) {
-            throw new RuntimeException(new DataBaseException("Open connection error"));
+            throw new RuntimeException(new DatabaseException("Open connection error"));
         }
     }
+
 }
 

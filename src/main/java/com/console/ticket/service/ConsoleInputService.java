@@ -1,18 +1,23 @@
 package com.console.ticket.service;
 
 import com.console.ticket.constants.Constants;
-import com.console.ticket.data.DataBase;
-import com.console.ticket.exception.DataBaseException;
+import com.console.ticket.data.CardDAO;
+import com.console.ticket.data.ProductDAO;
+import com.console.ticket.entity.Product;
+import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Company;
+import com.console.ticket.exception.InputException;
+import com.console.ticket.util.ConnectionManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -21,49 +26,87 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConsoleInputService {
 
-    public static void readConsole(Company company, DataBase dataBase) {
-        System.out.print(Constants.MENU_MESSAGE);
-        String line;
+    public static void readConsole(Company company) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
+            createSqlTables();
+            System.out.print(Constants.MENU_MESSAGE);
+            String consoleInput;
             while (true) {
-                line = bufferedReader.readLine();
-                if (!line.contains("exit") && !line.contains(".txt")) {
-                    dataBase.setCard(findCardAndProducts(line.split(" "), dataBase));
-                    printReceiptToConsole(company, dataBase);
-                } else if (line.contains(".txt")) {
-                    ReceiptBuilder.readReceipt(line);
+                consoleInput = bufferedReader.readLine();
+
+                if (!consoleInput.contains("exit") && !consoleInput.contains(".txt")) {
+                    Map<String, String> stringMap = divideInputToStringMapBySeparators(consoleInput);
+                    Card foundCard = findCard(stringMap);
+                    List<Product> foundProducts = findProducts(stringMap);
+
+                    printReceiptToConsole(company, foundCard, foundProducts);
+                } else if (consoleInput.contains(".txt")) {
+                    ReceiptBuilder.readReceipt(consoleInput);
                 } else break;
             }
+        } catch (InputException e) {
+            System.out.println("Exception validate input data: " + e.getMessage());
+        } catch (DatabaseException e) {
+            System.out.println("Exception create database: " + e.getMessage());
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.out.println("Exception console input: " + e.getMessage());
         }
     }
 
-    private static void printReceiptToConsole(Company company, DataBase dataBase) {
-        System.out.println(ReceiptBuilder.writeReceipt(company, dataBase));
+    private static void printReceiptToConsole(Company company, Card foundCard, List<Product> foundProducts) {
+        System.out.println(ReceiptBuilder.writeReceipt(company, foundCard, foundProducts));
     }
 
-    private static Card findCardAndProducts(String[] array, DataBase dataBase) {
-        Map<String, String> stringMap = Arrays.stream(array)
+    private static HashMap<String, String> divideInputToStringMapBySeparators(String input) {
+        String[] inputPairList = input.split(" ");
+
+        return (HashMap<String, String>) Arrays.stream(inputPairList)
                 .map(s -> s.split("-"))
                 .collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
+    }
 
-        for (Map.Entry<String, String> map : stringMap.entrySet()) {
-            try {
-                if (map.getKey().equalsIgnoreCase("card")) {
-                    dataBase.findCardById(Integer.parseInt(map.getValue()));
-
-                    return dataBase.getCard();
-                }
-
-                int quantity = Integer.parseInt(map.getValue());
-                dataBase.findProductById(Integer.parseInt(map.getKey()), quantity);
-
-            } // TODO: refactor exception handling
-            catch (NumberFormatException e) {
-                throw new RuntimeException(new DataBaseException("Input data is invalid"));
-            }
+    private static Card findCard(Map<String, String> stringMap) throws InputException {
+        int cardNumber;
+        try {
+            cardNumber = stringMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().equalsIgnoreCase("card"))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .map(Integer::valueOf)
+                    .orElseThrow();
+        } catch (NoSuchElementException | NumberFormatException e) {
+            throw new InputException("Invalid card/card number: " + e.getMessage());
         }
-        return dataBase.getCard();
+
+        return CardDAO.getInstance().findCardById(cardNumber)
+                .orElse(Card.builder().cardNumber(Constants.CASHIER_NUMBER).discountSize(0D).build());
+    }
+
+    private static List<Product> findProducts(Map<String, String> stringMap) throws InputException {
+        Pattern isDigit = Pattern.compile("\\d+");
+        List<Product> productList = new ArrayList<>();
+
+        try {
+            stringMap.entrySet().stream()
+                    .filter(entry -> isDigit.matcher(entry.getKey()).find() && isDigit.matcher(entry.getValue()).find())
+                    .forEach(entry -> {
+                        Integer id = Integer.valueOf(entry.getKey());
+                        int quantity = Integer.parseInt(entry.getValue());
+                        Product foundProduct = ProductDAO.getInstance().findProductByIdAndSetQuantity(id, quantity).get();
+                        productList.add(foundProduct);
+                    });
+        } catch (NoSuchElementException | NumberFormatException e) {
+            throw new InputException("Invalid product id/quantity: ", e);
+        }
+        return productList;
+    }
+
+    private static void createSqlTables() throws DatabaseException {
+        try (var connection = ConnectionManager.open();
+             var statement = connection.createStatement()) {
+            statement.execute(Constants.CREATE_TABLES);
+        } catch (SQLException e) {
+            throw new DatabaseException("Exception create table: ", e);
+        }
     }
 }
