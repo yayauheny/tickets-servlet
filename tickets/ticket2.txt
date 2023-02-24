@@ -1,17 +1,17 @@
 _______________________________________
              CASH RECEIPT
 _______________________________________
-             Louis Vuitton
-101, avenue des Champs, 75008 Paris
+                   Evroopt
+Minsk, Kalvariyskaja 17, 1
 
-CASHIER №:2            Date: 21/12/2022       
-                       Time: 20:59:54         
+CASHIER №:2            Date: 24/02/2023       
+                       Time: 15:02:20         
 _______________________________________
 QTY:  DESCRIPTION:      PRICE:   TOTAL
-5     Apple             $1,19    $5,95
-4     Beef Steak        $17,99   $71,96
+2     Apple             $1,19    $2,38
+5     Cheese            $7,29    $36,45
 _______________________________________
 
 BUYER ID: [1]
 discount:                        $0,00  
-TOTAL:                           $77,91 
+TOTAL:                           $38,83 
