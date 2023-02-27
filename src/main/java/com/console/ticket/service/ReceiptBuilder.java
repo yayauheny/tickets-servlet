@@ -16,9 +16,10 @@ public final class ReceiptBuilder {
     private static String RECEIPT;
 
     public static String writeReceipt(Company company, Card foundCard, List<Product> foundProducts) {
+        String companyCurrency = company.getCurrency();
         String headerInfo = buildHeaderInfo(company);
-        String productInfo = buildProductInfo(foundProducts);
-        String totalInfo = buildTotalInfo(foundCard, foundProducts);
+        String productInfo = buildProductInfo(foundProducts, companyCurrency);
+        String totalInfo = buildTotalInfo(foundCard, foundProducts, companyCurrency);
 
         RECEIPT = headerInfo.concat(productInfo).concat(totalInfo);
 
@@ -52,7 +53,7 @@ public final class ReceiptBuilder {
                 .toString();
     }
 
-    private static String buildProductInfo(List<Product> foundProducts) throws DatabaseException {
+    private static String buildProductInfo(List<Product> foundProducts, String companyCurrency) throws DatabaseException {
         StringBuilder receiptBuilder = new StringBuilder();
 
         for (Product product : foundProducts) {
@@ -63,13 +64,13 @@ public final class ReceiptBuilder {
                 receiptBuilder
                         .append(String.format("%-6d", quantity))
                         .append(String.format("%-18s", product.getName()))
-                        .append(String.format("%s%-8.2f", Constants.CURRENCY, price))
-                        .append(String.format("%s%-4.2f%n", Constants.CURRENCY, (price * quantity)));
+                        .append(String.format("%s%-8.2f", companyCurrency, price))
+                        .append(String.format("%s%-4.2f%n", companyCurrency, (price * quantity)));
 
                 if (product.isDiscount() && product.getQuantity() > Constants.DISCOUNT_AFTER) {
                     double discountSize = ReceiptCalculator.calculateDiscountPerProduct(product);
                     receiptBuilder.append(String.format("%16s", "(discount)"))
-                            .append(String.format("%18s%-6.2f%n", "-" + Constants.CURRENCY, discountSize))
+                            .append(String.format("%18s%-6.2f%n", "-" + companyCurrency, discountSize))
                             .toString();
                 }
             }
@@ -78,7 +79,7 @@ public final class ReceiptBuilder {
         return receiptBuilder.toString();
     }
 
-    private static String buildTotalInfo(Card foundCard, List<Product> foundProducts) {
+    private static String buildTotalInfo(Card foundCard, List<Product> foundProducts, String companyCurrency) {
         double totalSum = ReceiptCalculator.calculateDiscountPricePerCard(foundProducts, foundCard);
         double cardDiscount = ReceiptCalculator.calculateCardDiscount(foundProducts, foundCard);
         foundProducts.forEach(product -> product.setQuantity(0));
@@ -86,8 +87,8 @@ public final class ReceiptBuilder {
         return new StringBuilder()
                 .append(Constants.OUTPUT_LINE + "\n")
                 .append(String.format("BUYER ID: [%d]%n", foundCard.getCardNumber()))
-                .append(String.format("discount: %24s%-6.2f%n", Constants.CURRENCY, cardDiscount))
-                .append(String.format("TOTAL: %27s%-6.2f", Constants.CURRENCY, totalSum))
+                .append(String.format("discount: %24s%-6.2f%n", companyCurrency, cardDiscount))
+                .append(String.format("TOTAL: %27s%-6.2f", companyCurrency, totalSum))
                 .toString();
     }
 }

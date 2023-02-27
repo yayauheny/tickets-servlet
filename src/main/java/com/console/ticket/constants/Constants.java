@@ -2,6 +2,8 @@ package com.console.ticket.constants;
 
 import com.console.ticket.entity.Currency;
 
+import java.nio.file.Path;
+
 public final class Constants {
     public static String CURRENCY = Currency.USA.getCurrency();
     public static int CASHIER_NUMBER = 0;
@@ -12,6 +14,21 @@ public final class Constants {
     public static String READ_MESSAGE = "Для чтения чека введите путь к файлу";
     public static String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
     public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
+
+    public static Path DEFAULT_RECEIPT_PATH = Path.of(String.format("tickets", Constants.CASHIER_NUMBER));
+    public static String RECEIPT_HEADER = """
+            _______________________________________
+                         CASH RECEIPT
+            _______________________________________
+                               %s
+            %s
+                        
+            CASHIER в„–:%s            Date: %s      
+                                   Time: %s        
+            _______________________________________
+            QTY:  DESCRIPTION:      PRICE:   TOTAL
+            """;
+
 
     public static String CREATE_TABLES = """
             CREATE SCHEMA IF NOT EXISTS company;

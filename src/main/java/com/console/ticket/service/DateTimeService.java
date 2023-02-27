@@ -16,7 +16,7 @@ public final class DateTimeService {
     private static DateTimeFormatter currentDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static DateTimeFormatter currentTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public static String getCurrentDateTime(DateTimeFormatter formatter){
+    private static String getCurrentDateTime(DateTimeFormatter formatter){
         try {
             return currentDateTime.now().format(formatter);
         } catch (DateTimeException e) {

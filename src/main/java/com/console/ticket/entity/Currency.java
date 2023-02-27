@@ -2,12 +2,7 @@ package com.console.ticket.entity;
 
 import lombok.Getter;
 
-/**
- * Валюты
- *
- */
 @Getter
-
 public enum Currency {
     BELARUS("BYN"),
     USA("$"),
@@ -18,8 +13,4 @@ public enum Currency {
     Currency(String currency) {
         this.currency = currency;
     }
-
-//    public String getCurrency() {
-//        return currency;
-//    }
 }

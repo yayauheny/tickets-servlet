@@ -19,7 +19,7 @@ public class TicketRunner {
     }
 
     public void setCompany() {
-        company = new Company("Evroopt", "Minsk, Kalvariyskaja 17, 1", 10, Currency.USA.getCurrency());
+        company = new Company("Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
     }
 
     public void initialize() {

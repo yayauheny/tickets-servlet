@@ -1,8 +1,8 @@
 package com.console.ticket.service;
 
 import com.console.ticket.constants.Constants;
-import com.console.ticket.data.CardDAO;
-import com.console.ticket.data.ProductDAO;
+import com.console.ticket.data.CardDao;
+import com.console.ticket.data.ProductDao;
 import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.entity.Card;
@@ -78,7 +78,7 @@ public final class ConsoleInputService {
             throw new InputException("Invalid card/card number: " + e.getMessage());
         }
 
-        return CardDAO.getInstance().findCardById(cardNumber)
+        return CardDao.getInstance().findCardById(cardNumber)
                 .orElse(Card.builder().cardNumber(Constants.CASHIER_NUMBER).discountSize(0D).build());
     }
 
@@ -92,7 +92,9 @@ public final class ConsoleInputService {
                     .forEach(entry -> {
                         Integer id = Integer.valueOf(entry.getKey());
                         int quantity = Integer.parseInt(entry.getValue());
-                        Product foundProduct = ProductDAO.getInstance().findProductByIdAndSetQuantity(id, quantity).get();
+                        Product foundProduct = ProductDao.getInstance().findProductById(id).get();
+                        foundProduct.setQuantity(quantity);
+
                         productList.add(foundProduct);
                     });
         } catch (NoSuchElementException | NumberFormatException e) {
