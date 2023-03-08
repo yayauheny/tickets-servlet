@@ -5,13 +5,9 @@ import java.util.HashMap;
 
 public class LruCache implements Cache {
     private HashMap<Integer, LinkedNode> map;
-    int DEFAULT_CAPACITY = 3;
-    int capacity;
-    int size;
+    private int capacity, size, DEFAULT_CAPACITY = 3;
 
-    LinkedNode head;
-
-    LinkedNode tail;
+    private LinkedNode head, tail;
 
     public LruCache(int capacity) {
         map = new HashMap<>(capacity);
@@ -65,10 +61,12 @@ public class LruCache implements Cache {
 
     @Override
     public void delete(int key) {
-        LinkedNode node = map.get(key);
-        delete(node);
-        map.remove(key);
-        size--;
+        if (map.containsKey(key)) {
+            LinkedNode node = map.get(key);
+            delete(node);
+            map.remove(key);
+            size--;
+        }
     }
 
     private void delete(LinkedNode element) {
@@ -88,9 +86,9 @@ public class LruCache implements Cache {
 
 
     class LinkedNode<T> {
-        int key;
+        private int key;
         T value;
-        LinkedNode next;
-        LinkedNode prev;
+        private LinkedNode next;
+        private LinkedNode prev;
     }
 }

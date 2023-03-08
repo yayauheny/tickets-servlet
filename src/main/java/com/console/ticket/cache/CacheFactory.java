@@ -8,13 +8,11 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class CacheFactory {
+    private String ymlFileName = "application.yml";
     private static int capacity;
     private static CacheType type;
 
-    public Cache getCache(int capacity) {
-        readYmlFile("application.yml");
-        capacity = (CacheFactory.capacity == 0) ? capacity : CacheFactory.capacity;
-
+    public Cache getCache(int capacity, CacheType type) {
         switch (type) {
             case LRU:
                 return new LruCache(capacity);
@@ -23,9 +21,8 @@ public class CacheFactory {
         }
     }
 
-    public Cache getCache() {
-        readYmlFile("application.yml");
-
+    public Cache getCacheFromYml() {
+        readYmlFile(ymlFileName);
         switch (type) {
             case LRU:
                 return new LruCache(capacity);
