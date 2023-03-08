@@ -16,6 +16,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     implementation 'org.postgresql:postgresql:42.5.1'
+    implementation 'org.yaml:snakeyaml:2.0'
+
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'

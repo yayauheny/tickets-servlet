@@ -1,10 +1,11 @@
-package com.console.ticket.factory;
+package com.console.ticket.cache;
 
 import java.util.HashMap;
 
 
-public class LruCache {
+public class LruCache implements Cache {
     private HashMap<Integer, LinkedNode> map;
+    int DEFAULT_CAPACITY = 3;
     int capacity;
     int size;
 
@@ -14,29 +15,36 @@ public class LruCache {
 
     public LruCache(int capacity) {
         map = new HashMap<>(capacity);
-        this.capacity = capacity;
+        if (capacity > 0) {
+            this.capacity = capacity;
+        } else this.capacity = DEFAULT_CAPACITY;
+
         head = new LinkedNode();
         tail = new LinkedNode();
+
         head.next = tail;
         tail.prev = head;
     }
 
-    public int get(int key) {
+    @Override
+    public <T> T get(int key) {
         LinkedNode element = map.get(key);
         if (element == null) {
-            return -1;
+            return null;
         }
-        remove(element);
+        delete(element);
         moveToHead(element);
-        return element.value;
+
+        return (T) element.value;
     }
 
-    public void put(int key, int value) {
+    @Override
+    public <T> void put(int key, T value) {
         LinkedNode element = map.get(key);
 
         if (element != null) {
             element.value = value;
-            remove(element);
+            delete(element);
             moveToHead(element);
         } else {
             element = new LinkedNode();
@@ -48,14 +56,22 @@ public class LruCache {
 
             if (size > capacity) {
                 map.remove(tail.prev.key);
-                remove(tail.prev);
+                delete(tail.prev);
                 size--;
             }
         }
 
     }
 
-    private void remove(LinkedNode element) {
+    @Override
+    public void delete(int key) {
+        LinkedNode node = map.get(key);
+        delete(node);
+        map.remove(key);
+        size--;
+    }
+
+    private void delete(LinkedNode element) {
         element.prev.next = element.next;
         element.next.prev = element.prev;
     }
@@ -71,9 +87,9 @@ public class LruCache {
     }
 
 
-    class LinkedNode {
+    class LinkedNode<T> {
         int key;
-        int value;
+        T value;
         LinkedNode next;
         LinkedNode prev;
     }
