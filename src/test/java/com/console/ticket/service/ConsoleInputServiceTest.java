@@ -23,6 +23,7 @@ class ConsoleInputServiceTest {
     @Mock
     private static Company company;
     private static String inputLine;
+    private static ConsoleInputServiceImpl consoleInputService;
     @BeforeAll
     static void initialize() {
         company = CompanyTestBuilder.aCompany()
@@ -31,6 +32,7 @@ class ConsoleInputServiceTest {
                 .withCurrency(Currency.USA.getCurrency())
                 .build();
         inputLine = "1-2 3-4 card-1111\nexit\n";
+        consoleInputService = ConsoleInputServiceImpl.getInstance();
     }
 
     @DisplayName("check read console correctly")
@@ -39,7 +41,7 @@ class ConsoleInputServiceTest {
         InputStream input = new ByteArrayInputStream(inputLine.getBytes(StandardCharsets.UTF_8));
         System.setIn(input);
 
-        ConsoleInputService.readConsole(company);
+        consoleInputService.readConsole(company);
 
         verify(company).getName();
         verify(company).getAddress();

@@ -65,8 +65,8 @@ class ReceiptCalculatorTest {
                     .withDiscount(true)
                     .build());
 
-            doReturn(expectedProduct).when(productDao).findProductById(1);
-            Product actualProduct = productDao.findProductById(1).get();
+            doReturn(expectedProduct).when(productDao).findById(1);
+            Product actualProduct = productDao.findById(1).get();
 
             double actualDiscount = ReceiptCalculator.calculateDiscountPerProduct(actualProduct);
             double expectedDiscount = 5D;
@@ -84,8 +84,8 @@ class ReceiptCalculatorTest {
                     .withDiscount(false)
                     .build());
 
-            doReturn(expectedProduct).when(productDao).findProductById(1);
-            Product actualProduct = productDao.findProductById(1).get();
+            doReturn(expectedProduct).when(productDao).findById(1);
+            Product actualProduct = productDao.findById(1).get();
 
             double actualDiscount = ReceiptCalculator.calculateDiscountPerProduct(actualProduct);
             double expectedDiscount = 0D;
@@ -104,8 +104,8 @@ class ReceiptCalculatorTest {
                     .withDiscountSize(10D)
                     .build());
 
-            Mockito.doReturn(expectedCard).when(cardDao).findCardById(1);
-            Card actualCard = cardDao.findCardById(1).get();
+            Mockito.doReturn(expectedCard).when(cardDao).findById(1);
+            Card actualCard = cardDao.findById(1).get();
 
             double actualDiscountPrice = ReceiptCalculator.calculateDiscountPricePerCard(productList, actualCard);
             double expectedDiscountPrice = 189D;
@@ -121,8 +121,8 @@ class ReceiptCalculatorTest {
                     .withDiscountSize(0D)
                     .build());
 
-            Mockito.doReturn(expectedCard).when(cardDao).findCardById(1);
-            Card actualCard = cardDao.findCardById(1).get();
+            Mockito.doReturn(expectedCard).when(cardDao).findById(1);
+            Card actualCard = cardDao.findById(1).get();
 
             double actualDiscountPrice = ReceiptCalculator.calculateDiscountPricePerCard(productList, actualCard);
             double expectedDiscountPrice = 210D;
@@ -141,8 +141,8 @@ class ReceiptCalculatorTest {
                     .withDiscountSize(35D)
                     .build());
 
-            Mockito.doReturn(expectedCard).when(cardDao).findCardById(1);
-            Card actualCard = cardDao.findCardById(1).get();
+            Mockito.doReturn(expectedCard).when(cardDao).findById(1);
+            Card actualCard = cardDao.findById(1).get();
 
             double actualCardDiscount = ReceiptCalculator.calculateCardDiscount(productList, actualCard);
             double expectedCardDiscount = 73.5D;
@@ -157,8 +157,8 @@ class ReceiptCalculatorTest {
                     .withDiscountSize(0D)
                     .build());
 
-            Mockito.doReturn(expectedCard).when(cardDao).findCardById(1);
-            Card actualCard = cardDao.findCardById(1).get();
+            Mockito.doReturn(expectedCard).when(cardDao).findById(1);
+            Card actualCard = cardDao.findById(1).get();
 
             double actualCardDiscount = ReceiptCalculator.calculateCardDiscount(productList, actualCard);
             double expectedCardDiscount = 0D;

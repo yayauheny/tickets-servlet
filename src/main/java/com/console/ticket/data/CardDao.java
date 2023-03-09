@@ -1,6 +1,7 @@
 package com.console.ticket.data;
 
 import com.console.ticket.entity.Card;
+import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.util.ConnectionManager;
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +22,25 @@ import java.util.Optional;
 @Getter
 public class CardDao {
     private static CardDao INSTANCE;
-    private static String FIND_CARD_BY_ID = """
+    private static String CARD_FIND = """
             SELECT * FROM company.discount_card WHERE id = ?
             """;
 
-    private static String CARDS_SELECT_ALL = """
+    private static String CARD_FIND_ALL = """
             SELECT * FROM company.discount_card
+            """;
+    private static String CARD_DELETE = """
+            DELETE FROM company.discount_card
+            WHERE id = ?
+            """;
+    private static String CARD_SAVE = """
+            INSERT INTO company.discount_card (discount)
+            VALUES (?);
+            """;
+    private static String CARD_UPDATE = """
+            UPDATE company.discount_card
+            SET discount = ?
+            WHERE id = ?
             """;
 
     public static CardDao getInstance() {
@@ -35,12 +50,12 @@ public class CardDao {
         return INSTANCE;
     }
 
-    public Optional<Card> findCardById(Integer id) throws DatabaseException, InputException {
+    public Optional<Card> findById(Integer id) throws DatabaseException, InputException {
         if (id == null || id < 0) {
             throw new InputException("Error find card by id: " + id);
         }
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(FIND_CARD_BY_ID)) {
+             var preparedStatement = connection.prepareStatement(CARD_FIND)) {
 
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -53,6 +68,49 @@ public class CardDao {
             return Optional.ofNullable(card);
         } catch (SQLException e) {
             throw new DatabaseException("Error find card by id: " + id, e);
+        }
+    }
+
+    public void delete(Integer id) throws DatabaseException, InputException {
+        if (id == null || id < 0) {
+            throw new InputException("Error find card by id: " + id);
+        }
+
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(CARD_DELETE)) {
+            preparedStatement.setObject(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error delete card by id: " + id, e);
+        }
+    }
+
+    public Card save(Card card) throws DatabaseException {
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(CARD_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setDouble(1, card.getDiscountSize());
+
+            preparedStatement.executeUpdate();
+            ResultSet keys = preparedStatement.getGeneratedKeys();
+            if (keys.next()) {
+                card.setCardNumber(keys.getInt("id"));
+            }
+
+            return card;
+        } catch (SQLException e) {
+            throw new DatabaseException("Error save card: " + card.getCardNumber(), e);
+        }
+    }
+
+    public void update(Card card) throws DatabaseException {
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(CARD_UPDATE)) {
+            preparedStatement.setDouble(1, card.getDiscountSize());
+            preparedStatement.setInt(2, card.getCardNumber());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error update card: " + card.getCardNumber(), e);
         }
     }
 
@@ -69,7 +127,7 @@ public class CardDao {
 
     public List<Optional<Card>> findAll() throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARDS_SELECT_ALL);
+             var preparedStatement = connection.prepareStatement(CARD_FIND_ALL);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Optional<Card>> cardsList = new ArrayList<>();
 

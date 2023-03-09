@@ -29,7 +29,7 @@ class ProductDaoTest {
     void checkFindProductByIdShouldBeEmpty() {
         Integer noSuchProductId = 909090;
 
-        assertThat(productDao.findProductById(noSuchProductId)).isEmpty();
+        assertThat(productDao.findById(noSuchProductId)).isEmpty();
     }
 
     @DisplayName("find all database products properly")
@@ -45,20 +45,20 @@ class ProductDaoTest {
     void checkFindByIdThrowsInputExceptionIfNegative() {
         int negativeId = -1;
 
-        assertThrows(InputException.class, () -> productDao.findProductById(negativeId));
+        assertThrows(InputException.class, () -> productDao.findById(negativeId));
     }
 
     @DisplayName("check throw exception if id is null")
     @Test
     void checkFindByIdThrowsInputExceptionIfNull() {
-        assertThrows(InputException.class, () -> productDao.findProductById(null));
+        assertThrows(InputException.class, () -> productDao.findById(null));
     }
 
     @DisplayName("check find all existing products by their id")
     @ParameterizedTest
     @MethodSource("com.console.ticket.data.ProductDaoTest#getAllProducts")
     void checkFindProductByIdReturnAllProductsFromDatabase(Optional<Product> product, Integer productId) {
-        Optional<Product> foundProduct = productDao.findProductById(productId);
+        Optional<Product> foundProduct = productDao.findById(productId);
 
         assertThat(foundProduct.get()).isEqualTo(product.get());
     }

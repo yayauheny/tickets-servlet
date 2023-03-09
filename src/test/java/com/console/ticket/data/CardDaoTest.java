@@ -29,7 +29,7 @@ class CardDaoTest {
     void checkFindCardByIdShouldBeEmpty() {
         int cardId = 909090;
 
-        assertThat(cardDao.findCardById(cardId)).isEmpty();
+        assertThat(cardDao.findById(cardId)).isEmpty();
     }
 
     @DisplayName("find all database cards properly")
@@ -43,20 +43,20 @@ class CardDaoTest {
     @DisplayName("exception if id is negative")
     @Test
     void checkFindByIdThrowsInputExceptionIfNegative() {
-        assertThrows(InputException.class, () -> cardDao.findCardById(-1));
+        assertThrows(InputException.class, () -> cardDao.findById(-1));
     }
 
     @DisplayName("exception if id is null")
     @Test
     void checkFindByIdThrowsInputExceptionIfNull() {
-        assertThrows(InputException.class, () -> cardDao.findCardById(null));
+        assertThrows(InputException.class, () -> cardDao.findById(null));
     }
 
     @DisplayName("find all existing cards by id")
     @ParameterizedTest
     @MethodSource("com.console.ticket.data.CardDaoTest#getAllCards")
     void checkFindCardByIdReturnAllCardsFromDatabase(Optional<Card> card, Integer cardId) {
-        Optional<Card> foundCard = cardDao.findCardById(cardId);
+        Optional<Card> foundCard = cardDao.findById(cardId);
 
         assertThat(foundCard.get()).isEqualTo(card.get());
     }
