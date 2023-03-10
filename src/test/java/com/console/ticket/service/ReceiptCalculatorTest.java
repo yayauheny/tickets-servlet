@@ -100,7 +100,7 @@ class ReceiptCalculatorTest {
         @Test
         void checkCalculateDiscountPricePerCardReturn189() {
             Optional<Card> expectedCard = Optional.of(CardTestBuilder.aCard()
-                    .withCardNumber(1111)
+                    .withId(1111)
                     .withDiscountSize(10D)
                     .build());
 
@@ -117,7 +117,7 @@ class ReceiptCalculatorTest {
         @Test
         void checkCalculateDiscountPricePerCardReturn210() {
             Optional<Card> expectedCard = Optional.of(CardTestBuilder.aCard()
-                    .withCardNumber(1111)
+                    .withId(1111)
                     .withDiscountSize(0D)
                     .build());
 
@@ -137,7 +137,7 @@ class ReceiptCalculatorTest {
         @Test
         void checkCalculateCardDiscountReturn136_5() {
             Optional<Card> expectedCard = Optional.of(CardTestBuilder.aCard()
-                    .withCardNumber(2222)
+                    .withId(2222)
                     .withDiscountSize(35D)
                     .build());
 
@@ -153,7 +153,7 @@ class ReceiptCalculatorTest {
         @Test
         void calculateCardDiscount() {
             Optional<Card> expectedCard = Optional.of(CardTestBuilder.aCard()
-                    .withCardNumber(2222)
+                    .withId(2222)
                     .withDiscountSize(0D)
                     .build());
 

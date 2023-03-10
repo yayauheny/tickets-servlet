@@ -20,7 +20,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter
 @Getter
-public class CardDao implements CardDaoTemplate {
+public class CardDao implements DaoTemplate<Card> {
     private static CardDao INSTANCE;
     private static String CARD_FIND = """
             SELECT * FROM company.discount_card WHERE id = ?
@@ -99,12 +99,12 @@ public class CardDao implements CardDaoTemplate {
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
             if (keys.next()) {
-                card.setCardNumber(keys.getInt("id"));
+                card.setId(keys.getInt("id"));
             }
 
             return card;
         } catch (SQLException e) {
-            throw new DatabaseException("Error save card: " + card.getCardNumber(), e);
+            throw new DatabaseException("Error save card: " + card.getId(), e);
         }
     }
 
@@ -114,18 +114,18 @@ public class CardDao implements CardDaoTemplate {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(CARD_UPDATE)) {
             preparedStatement.setDouble(1, card.getDiscountSize());
-            preparedStatement.setInt(2, card.getCardNumber());
+            preparedStatement.setInt(2, card.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DatabaseException("Error update card: " + card.getCardNumber(), e);
+            throw new DatabaseException("Error update card: " + card.getId(), e);
         }
     }
 
     private Card buildCard(ResultSet resultSet) throws DatabaseException {
         try {
             return Card.builder()
-                    .cardNumber(resultSet.getInt("id"))
+                    .id(resultSet.getInt("id"))
                     .discountSize(resultSet.getDouble("discount"))
                     .build();
         } catch (SQLException e) {
@@ -143,7 +143,7 @@ public class CardDao implements CardDaoTemplate {
 
             while (resultSet.next()) {
                 Optional<Card> card = Optional.ofNullable(Card.builder()
-                        .cardNumber(resultSet.getInt("id"))
+                        .id(resultSet.getInt("id"))
                         .discountSize(resultSet.getDouble("discount"))
                         .build());
                 cardsList.add(card);

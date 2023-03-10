@@ -20,7 +20,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Setter
-public class ProductDao implements ProductDaoTemplate {
+public class ProductDao implements DaoTemplate<Product> {
     private static ProductDao INSTANCE;
     private static String PRODUCT_FIND = """
             SELECT * FROM company.product WHERE id = ?

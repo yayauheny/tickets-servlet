@@ -3,6 +3,7 @@ package com.console.ticket.constants;
 import com.console.ticket.entity.Currency;
 
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 public final class Constants {
     public static String CURRENCY = Currency.USA.getCurrency();
@@ -16,19 +17,7 @@ public final class Constants {
     public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
 
     public static Path DEFAULT_RECEIPT_PATH = Path.of(String.format("tickets", Constants.CASHIER_NUMBER));
-    public static String RECEIPT_HEADER = """
-            _______________________________________
-                         CASH RECEIPT
-            _______________________________________
-                               %s
-            %s
-                        
-            CASHIER в„–:%s            Date: %s      
-                                   Time: %s        
-            _______________________________________
-            QTY:  DESCRIPTION:      PRICE:   TOTAL
-            """;
-
+    public static Pattern isDigit = Pattern.compile("\\d+");
 
     public static String CREATE_TABLES = """
             CREATE SCHEMA IF NOT EXISTS company;

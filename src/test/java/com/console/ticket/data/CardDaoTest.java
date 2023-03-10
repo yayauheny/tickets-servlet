@@ -64,6 +64,6 @@ class CardDaoTest {
     @DisplayName("arguments of all database cards")
     static Stream<Arguments> getAllCards() throws DatabaseException {
         return cardDao.findAll().stream()
-                .map(card -> Arguments.of(card, card.get().getCardNumber()));
+                .map(card -> Arguments.of(card, card.get().getId()));
     }
 }
