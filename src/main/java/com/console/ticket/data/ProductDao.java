@@ -1,5 +1,6 @@
 package com.console.ticket.data;
 
+import com.console.ticket.annotation.Cached;
 import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
@@ -19,9 +20,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Setter
-public class ProductDao {
-
-
+public class ProductDao implements ProductDaoTemplate {
     private static ProductDao INSTANCE;
     private static String PRODUCT_FIND = """
             SELECT * FROM company.product WHERE id = ?
@@ -46,6 +45,8 @@ public class ProductDao {
             WHERE id = ?
             """;
 
+    @Override
+    @Cached
     public Optional<Product> findById(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
             throw new InputException("Error find product by id: " + id);
@@ -67,6 +68,8 @@ public class ProductDao {
         }
     }
 
+    @Override
+    @Cached
     public void delete(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
             throw new InputException("Error find product by id: " + id);
@@ -80,6 +83,8 @@ public class ProductDao {
         }
     }
 
+    @Override
+    @Cached
     public Product save(Product product) throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(PRODUCT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
@@ -90,7 +95,7 @@ public class ProductDao {
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
-            if(keys.next()) {
+            if (keys.next()) {
                 product.setId(keys.getInt("id"));
             }
 
@@ -99,7 +104,10 @@ public class ProductDao {
             throw new DatabaseException("Error save product: " + product.getName(), e);
         }
     }
-    public void update (Product product) throws DatabaseException {
+
+    @Override
+    @Cached
+    public void update(Product product) throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(PRODUCT_UPDATE)) {
             preparedStatement.setString(1, product.getName());
@@ -127,6 +135,8 @@ public class ProductDao {
         }
     }
 
+    @Override
+    @Cached
     public List<Optional<Product>> findAll() throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(PRODUCT_FIND_ALL);

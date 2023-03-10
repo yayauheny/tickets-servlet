@@ -1,7 +1,7 @@
 package com.console.ticket.data;
 
+import com.console.ticket.annotation.Cached;
 import com.console.ticket.entity.Card;
-import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.util.ConnectionManager;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter
 @Getter
-public class CardDao {
+public class CardDao implements CardDaoTemplate {
     private static CardDao INSTANCE;
     private static String CARD_FIND = """
             SELECT * FROM company.discount_card WHERE id = ?
@@ -39,7 +39,7 @@ public class CardDao {
             """;
     private static String CARD_UPDATE = """
             UPDATE company.discount_card
-            SET discount = ?
+            SET discount = ?sa
             WHERE id = ?
             """;
 
@@ -50,6 +50,8 @@ public class CardDao {
         return INSTANCE;
     }
 
+    @Override
+    @Cached
     public Optional<Card> findById(Integer id) throws DatabaseException, InputException {
         if (id == null || id < 0) {
             throw new InputException("Error find card by id: " + id);
@@ -71,6 +73,8 @@ public class CardDao {
         }
     }
 
+    @Override
+    @Cached
     public void delete(Integer id) throws DatabaseException, InputException {
         if (id == null || id < 0) {
             throw new InputException("Error find card by id: " + id);
@@ -85,6 +89,8 @@ public class CardDao {
         }
     }
 
+    @Override
+    @Cached
     public Card save(Card card) throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(CARD_SAVE, Statement.RETURN_GENERATED_KEYS)) {
@@ -102,6 +108,8 @@ public class CardDao {
         }
     }
 
+    @Override
+    @Cached
     public void update(Card card) throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(CARD_UPDATE)) {
@@ -125,6 +133,8 @@ public class CardDao {
         }
     }
 
+    @Override
+    @Cached
     public List<Optional<Card>> findAll() throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(CARD_FIND_ALL);

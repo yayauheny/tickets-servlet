@@ -1,7 +1,7 @@
 package com.console.ticket;
 
 import com.console.ticket.entity.Company;
-import com.console.ticket.service.ConsoleInputServiceImpl;
+import com.console.ticket.service.ConsoleInputService;
 import com.console.ticket.entity.Currency;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TicketRunner {
     Company company;
-    ConsoleInputServiceImpl consoleInputService;
+    ConsoleInputService consoleInputService;
 
     public static void main(String[] args) {
         TicketRunner ticketRunner = new TicketRunner();
@@ -22,8 +22,10 @@ public class TicketRunner {
 
     public void setCompany() {
         company = new Company("Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
-    }public void setConsoleInputService() {
-        consoleInputService = ConsoleInputServiceImpl.getInstance();
+    }
+
+    public void setConsoleInputService() {
+        consoleInputService = ConsoleInputService.getInstance();
     }
 
     public void initialize() {

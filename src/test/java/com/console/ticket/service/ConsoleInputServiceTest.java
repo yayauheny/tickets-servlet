@@ -23,7 +23,7 @@ class ConsoleInputServiceTest {
     @Mock
     private static Company company;
     private static String inputLine;
-    private static ConsoleInputServiceImpl consoleInputService;
+    private static ConsoleInputService consoleInputService;
     @BeforeAll
     static void initialize() {
         company = CompanyTestBuilder.aCompany()
@@ -32,7 +32,7 @@ class ConsoleInputServiceTest {
                 .withCurrency(Currency.USA.getCurrency())
                 .build();
         inputLine = "1-2 3-4 card-1111\nexit\n";
-        consoleInputService = ConsoleInputServiceImpl.getInstance();
+        consoleInputService = ConsoleInputService.getInstance();
     }
 
     @DisplayName("check read console correctly")
