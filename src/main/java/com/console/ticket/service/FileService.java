@@ -23,7 +23,7 @@ public final class FileService {
     public static void writeReceipt(String receipt) throws FileException {
         File file = Constants.DEFAULT_RECEIPT_PATH.toFile();
         try {
-            Files.write(Path.of(file.getPath()), receipt.getBytes());
+            Files.write(Path.of(file.toURI()), receipt.getBytes());
         } catch (IOException e) {
             throw new FileException("Exception while writing to file: ", e);
         }

@@ -86,7 +86,7 @@ public final class ReceiptBuilder {
 
         return new StringBuilder()
                 .append(Constants.OUTPUT_LINE + "\n")
-                .append(String.format("BUYER ID: [%d]%n", foundCard.getCardNumber()))
+                .append(String.format("BUYER ID: [%d]%n", foundCard.getId()))
                 .append(String.format("discount: %24s%-6.2f%n", companyCurrency, cardDiscount))
                 .append(String.format("TOTAL: %27s%-6.2f", companyCurrency, totalSum))
                 .toString();

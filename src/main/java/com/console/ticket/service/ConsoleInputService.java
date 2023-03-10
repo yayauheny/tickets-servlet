@@ -2,12 +2,16 @@ package com.console.ticket.service;
 
 import com.console.ticket.constants.Constants;
 import com.console.ticket.data.CardDao;
+import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.data.ProductDao;
 import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Company;
 import com.console.ticket.exception.InputException;
+import com.console.ticket.service.impl.CardServiceImpl;
+import com.console.ticket.service.impl.ProductServiceImpl;
+import com.console.ticket.service.proxy.DaoProxy;
 import com.console.ticket.util.ConnectionManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,6 +19,7 @@ import lombok.NoArgsConstructor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -24,9 +29,17 @@ import java.util.stream.Collectors;
  * Обработка введенных данных
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConsoleInputService {
+public class ConsoleInputService {
+    private static ConsoleInputService INSTANCE;
 
-    public static void readConsole(Company company) {
+    public static ConsoleInputService getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ConsoleInputService();
+        }
+        return INSTANCE;
+    }
+
+    public void readConsole(Company company) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
             createSqlTables();
             System.out.print(Constants.MENU_MESSAGE);
@@ -35,9 +48,9 @@ public final class ConsoleInputService {
                 consoleInput = bufferedReader.readLine();
 
                 if (!consoleInput.contains("exit") && !consoleInput.contains(".txt")) {
-                    Map<String, String> stringMap = divideInputToStringMapBySeparators(consoleInput);
-                    Card foundCard = findCard(stringMap);
-                    List<Product> foundProducts = findProducts(stringMap);
+                    Map<String, String> inputPairsMap = divideInputToStringMapBySeparators(consoleInput);
+                    Card foundCard = findCard(inputPairsMap);
+                    List<Product> foundProducts = findProducts(inputPairsMap);
 
                     printReceiptToConsole(company, foundCard, foundProducts);
                 } else if (consoleInput.contains(".txt")) {
@@ -66,7 +79,9 @@ public final class ConsoleInputService {
     }
 
     private static Card findCard(Map<String, String> stringMap) throws InputException {
+        CardServiceImpl cardService = new CardServiceImpl();
         int cardNumber;
+
         try {
             cardNumber = stringMap.entrySet().stream()
                     .filter(entry -> entry.getKey().equalsIgnoreCase("card"))
@@ -75,24 +90,24 @@ public final class ConsoleInputService {
                     .map(Integer::valueOf)
                     .orElseThrow();
         } catch (NoSuchElementException | NumberFormatException e) {
-            throw new InputException("Invalid card/card number: " + e.getMessage());
+            throw new InputException("Invalid card number: " + e.getMessage());
         }
 
-        return CardDao.getInstance().findCardById(cardNumber)
-                .orElse(Card.builder().cardNumber(Constants.CASHIER_NUMBER).discountSize(0D).build());
+        return cardService.findById(cardNumber)
+                .orElse(Card.builder().id(Constants.CASHIER_NUMBER).discountSize(0D).build());
     }
 
     private static List<Product> findProducts(Map<String, String> stringMap) throws InputException {
-        Pattern isDigit = Pattern.compile("\\d+");
+        ProductServiceImpl productService = new ProductServiceImpl();
         List<Product> productList = new ArrayList<>();
 
         try {
             stringMap.entrySet().stream()
-                    .filter(entry -> isDigit.matcher(entry.getKey()).find() && isDigit.matcher(entry.getValue()).find())
+                    .filter(entry -> Constants.isDigit.matcher(entry.getKey()).find() && Constants.isDigit.matcher(entry.getValue()).find())
                     .forEach(entry -> {
                         Integer id = Integer.valueOf(entry.getKey());
                         int quantity = Integer.parseInt(entry.getValue());
-                        Product foundProduct = ProductDao.getInstance().findProductById(id).get();
+                        Product foundProduct = productService.findById(id).get();
                         foundProduct.setQuantity(quantity);
 
                         productList.add(foundProduct);

@@ -11,10 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TicketRunner {
     Company company;
+    ConsoleInputService consoleInputService;
 
     public static void main(String[] args) {
         TicketRunner ticketRunner = new TicketRunner();
         ticketRunner.initialize();
+        ticketRunner.setConsoleInputService();
         ticketRunner.run();
     }
 
@@ -22,11 +24,15 @@ public class TicketRunner {
         company = new Company("Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
     }
 
+    public void setConsoleInputService() {
+        consoleInputService = ConsoleInputService.getInstance();
+    }
+
     public void initialize() {
         setCompany();
     }
 
     public void run() {
-        ConsoleInputService.readConsole(company);
+        consoleInputService.readConsole(company);
     }
 }

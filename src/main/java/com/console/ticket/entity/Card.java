@@ -12,6 +12,6 @@ import lombok.Setter;
 @Builder
 @EqualsAndHashCode
 public class Card {
-    private Integer cardNumber;
+    private Integer id;
     private Double discountSize;
 }
