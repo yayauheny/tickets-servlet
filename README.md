@@ -22,6 +22,5 @@ Java 17, Gradle 7.5, PostgreSQL 15.1.1, JUnit5, Patterns [Builder, Singleton, Fa
 - Реализовано кеширование всех данных из БД (в зависимости от выбранного типа, LFU/LRU)
 ### To do
 - Мигрировать БД
-- Дописать интеграционные тесты для CardService/ProductService
 - Javadoc
 - Проверить считываемый с консоли файл на принадлежность к чеку с помощью RegEx

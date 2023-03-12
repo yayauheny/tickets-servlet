@@ -1,13 +1,9 @@
 package com.console.ticket.service.impl;
 
-import com.console.ticket.data.CardDao;
 import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.data.ProductDao;
-import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Product;
 import com.console.ticket.service.proxy.DaoProxy;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -16,16 +12,17 @@ import java.util.Optional;
 public class ProductServiceImpl implements DaoService<Product> {
     private ProductDao productDao;
 
-    private DaoTemplate proxyInstance;
+    private DaoTemplate<Product> proxyInstance;
 
-    public ProductServiceImpl() {
-        productDao = ProductDao.getInstance();
+    public ProductServiceImpl(ProductDao productDao) {
+        this.productDao = productDao;
 
-        proxyInstance = (DaoTemplate) Proxy.newProxyInstance(
-                DaoTemplate.class.getClassLoader(),
-                new Class[]{DaoTemplate.class},
+        proxyInstance = (DaoTemplate<Product>) Proxy.newProxyInstance(
+                productDao.getClass().getClassLoader(),
+                productDao.getClass().getInterfaces(),
                 new DaoProxy(productDao));
     }
+
     @Override
     public Optional<Product> findById(Integer id) {
         return proxyInstance.findById(id);
@@ -37,8 +34,8 @@ public class ProductServiceImpl implements DaoService<Product> {
     }
 
     @Override
-    public Product save(Product product) {
-        return (Product) proxyInstance.save(product);
+    public Optional<Product> save(Product product) {
+        return proxyInstance.save(product);
     }
 
     @Override
