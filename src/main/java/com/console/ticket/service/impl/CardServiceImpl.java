@@ -4,23 +4,21 @@ import com.console.ticket.data.CardDao;
 import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.entity.Card;
 import com.console.ticket.service.proxy.DaoProxy;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Optional;
 
 public class CardServiceImpl implements DaoService<Card> {
-    private  CardDao cardDao;
-    private  DaoTemplate proxyInstance;
+    private CardDao cardDao;
+    private DaoTemplate<Card> proxyInstance;
 
-    public CardServiceImpl() {
-        cardDao = CardDao.getInstance();
+    public CardServiceImpl(CardDao cardDao) {
+        this.cardDao = cardDao;
 
-        proxyInstance = (DaoTemplate) Proxy.newProxyInstance(
-                DaoTemplate.class.getClassLoader(),
-                new Class[]{DaoTemplate.class},
+        proxyInstance = (DaoTemplate<Card>) Proxy.newProxyInstance(
+                cardDao.getClass().getClassLoader(),
+                cardDao.getClass().getInterfaces(),
                 new DaoProxy(cardDao));
     }
 
@@ -35,8 +33,8 @@ public class CardServiceImpl implements DaoService<Card> {
     }
 
     @Override
-    public Card save(Card card) {
-        return (Card) proxyInstance.save(card);
+    public Optional<Card> save(Card card) {
+        return proxyInstance.save(card);
     }
 
     @Override

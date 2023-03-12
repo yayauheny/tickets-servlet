@@ -2,16 +2,14 @@ package com.console.ticket.service;
 
 import com.console.ticket.constants.Constants;
 import com.console.ticket.data.CardDao;
-import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.data.ProductDao;
-import com.console.ticket.entity.Product;
-import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Company;
+import com.console.ticket.entity.Product;
+import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.service.impl.CardServiceImpl;
 import com.console.ticket.service.impl.ProductServiceImpl;
-import com.console.ticket.service.proxy.DaoProxy;
 import com.console.ticket.util.ConnectionManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,10 +17,8 @@ import lombok.NoArgsConstructor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -79,7 +75,7 @@ public class ConsoleInputService {
     }
 
     private static Card findCard(Map<String, String> stringMap) throws InputException {
-        CardServiceImpl cardService = new CardServiceImpl();
+        CardServiceImpl cardService = new CardServiceImpl(CardDao.getInstance());
         int cardNumber;
 
         try {
@@ -98,7 +94,7 @@ public class ConsoleInputService {
     }
 
     private static List<Product> findProducts(Map<String, String> stringMap) throws InputException {
-        ProductServiceImpl productService = new ProductServiceImpl();
+        ProductServiceImpl productService = new ProductServiceImpl(ProductDao.getInstance());
         List<Product> productList = new ArrayList<>();
 
         try {

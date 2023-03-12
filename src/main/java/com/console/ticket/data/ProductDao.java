@@ -1,10 +1,10 @@
 package com.console.ticket.data;
 
-import com.console.ticket.annotation.Cached;
 import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.util.ConnectionManager;
+import com.console.ticket.util.SqlRequestsUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,42 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
 public class ProductDao implements DaoTemplate<Product> {
     private static ProductDao INSTANCE;
-    private static String PRODUCT_FIND = """
-            SELECT * FROM company.product WHERE id = ?
-            """;
-
-    private static String PRODUCT_FIND_ALL = """
-            SELECT * FROM company.product
-            """;
-    private static String PRODUCT_DELETE = """
-            DELETE FROM company.product WHERE id = ?
-            """;
-    private static String PRODUCT_SAVE = """
-            INSERT INTO company.product (name, quantity, price, discount) 
-            VALUES (?, ?, ?, ?);
-            """;
-    private static String PRODUCT_UPDATE = """
-            UPDATE company.product
-            SET name = ?,
-                quantity = ?,
-                price = ?,
-                discount = ?
-            WHERE id = ?
-            """;
 
     @Override
-    @Cached
     public Optional<Product> findById(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
             throw new InputException("Error find product by id: " + id);
         }
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(PRODUCT_FIND)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_FIND)) {
 
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -69,13 +46,12 @@ public class ProductDao implements DaoTemplate<Product> {
     }
 
     @Override
-    @Cached
     public void delete(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
             throw new InputException("Error find product by id: " + id);
         }
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(PRODUCT_DELETE)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_DELETE)) {
             preparedStatement.setObject(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -84,10 +60,9 @@ public class ProductDao implements DaoTemplate<Product> {
     }
 
     @Override
-    @Cached
-    public Product save(Product product) throws DatabaseException {
+    public Optional<Product> save(Product product) throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(PRODUCT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setInt(2, product.getQuantity());
             preparedStatement.setDouble(3, product.getPrice());
@@ -99,17 +74,16 @@ public class ProductDao implements DaoTemplate<Product> {
                 product.setId(keys.getInt("id"));
             }
 
-            return product;
+            return Optional.ofNullable(product);
         } catch (SQLException e) {
             throw new DatabaseException("Error save product: " + product.getName(), e);
         }
     }
 
     @Override
-    @Cached
     public void update(Product product) throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(PRODUCT_UPDATE)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_UPDATE)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setInt(2, product.getQuantity());
             preparedStatement.setDouble(3, product.getPrice());
@@ -136,10 +110,9 @@ public class ProductDao implements DaoTemplate<Product> {
     }
 
     @Override
-    @Cached
     public List<Optional<Product>> findAll() throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(PRODUCT_FIND_ALL);
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_FIND_ALL);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Optional<Product>> productsList = new ArrayList<>();
 

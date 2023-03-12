@@ -1,10 +1,10 @@
 package com.console.ticket.data;
 
-import com.console.ticket.annotation.Cached;
 import com.console.ticket.entity.Card;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.util.ConnectionManager;
+import com.console.ticket.util.SqlRequestsUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,26 +22,6 @@ import java.util.Optional;
 @Getter
 public class CardDao implements DaoTemplate<Card> {
     private static CardDao INSTANCE;
-    private static String CARD_FIND = """
-            SELECT * FROM company.discount_card WHERE id = ?
-            """;
-
-    private static String CARD_FIND_ALL = """
-            SELECT * FROM company.discount_card
-            """;
-    private static String CARD_DELETE = """
-            DELETE FROM company.discount_card
-            WHERE id = ?
-            """;
-    private static String CARD_SAVE = """
-            INSERT INTO company.discount_card (discount)
-            VALUES (?);
-            """;
-    private static String CARD_UPDATE = """
-            UPDATE company.discount_card
-            SET discount = ?sa
-            WHERE id = ?
-            """;
 
     public static CardDao getInstance() {
         if (INSTANCE == null) {
@@ -51,13 +31,12 @@ public class CardDao implements DaoTemplate<Card> {
     }
 
     @Override
-    @Cached
     public Optional<Card> findById(Integer id) throws DatabaseException, InputException {
         if (id == null || id < 0) {
             throw new InputException("Error find card by id: " + id);
         }
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARD_FIND)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_FIND)) {
 
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -74,14 +53,13 @@ public class CardDao implements DaoTemplate<Card> {
     }
 
     @Override
-    @Cached
     public void delete(Integer id) throws DatabaseException, InputException {
         if (id == null || id < 0) {
             throw new InputException("Error find card by id: " + id);
         }
 
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARD_DELETE)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_DELETE)) {
             preparedStatement.setObject(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -90,10 +68,9 @@ public class CardDao implements DaoTemplate<Card> {
     }
 
     @Override
-    @Cached
-    public Card save(Card card) throws DatabaseException {
+    public Optional<Card> save(Card card) throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARD_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_SAVE, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setDouble(1, card.getDiscountSize());
 
             preparedStatement.executeUpdate();
@@ -102,17 +79,16 @@ public class CardDao implements DaoTemplate<Card> {
                 card.setId(keys.getInt("id"));
             }
 
-            return card;
+            return Optional.ofNullable(card);
         } catch (SQLException e) {
             throw new DatabaseException("Error save card: " + card.getId(), e);
         }
     }
 
     @Override
-    @Cached
     public void update(Card card) throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARD_UPDATE)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_UPDATE)) {
             preparedStatement.setDouble(1, card.getDiscountSize());
             preparedStatement.setInt(2, card.getId());
 
@@ -134,10 +110,9 @@ public class CardDao implements DaoTemplate<Card> {
     }
 
     @Override
-    @Cached
     public List<Optional<Card>> findAll() throws DatabaseException {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(CARD_FIND_ALL);
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_FIND_ALL);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             List<Optional<Card>> cardsList = new ArrayList<>();
 
