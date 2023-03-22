@@ -3,6 +3,16 @@ package com.console.ticket.cache;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Least Frequently Used (LFU) cache implementation for
+ * storing, getting, deleting and updating data.
+ * This class provides similar functionality to a collection,
+ * but also tracks the usage count of each element.
+ * The LFU cache removes the least frequently used element,
+ * taking into account both the frequency and recency of usage,
+ * when the cache size exceeds its capacity.
+ */
+
 public class LfuCache implements Cache {
     private Map<Integer, ListNode> keyMap = new HashMap<>();
     private Map<Integer, DoublyList> freqMap = new HashMap<>();
@@ -102,7 +112,6 @@ public class LfuCache implements Cache {
         T value;
 
         ListNode() {
-
         }
 
         ListNode(T val, int key) {

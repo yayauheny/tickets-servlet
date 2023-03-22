@@ -1,7 +1,13 @@
 package com.console.ticket.cache;
 
 import java.util.HashMap;
-
+/**
+ * Least Recently Used (LRU) cache implementation for
+ * storing, getting, deleting and updating data.
+ * This class provides similar functionality to a collection,
+ * but removes the least recently used element when the cache
+ * size exceeds its capacity.
+ */
 
 public class LruCache implements Cache {
     private HashMap<Integer, LinkedNode> map;

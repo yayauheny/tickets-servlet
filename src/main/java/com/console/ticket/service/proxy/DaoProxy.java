@@ -10,7 +10,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Optional;
-
+/**
+ * DaoProxy.class is a class that intercepts method calls to a DaoTemplate object
+ * and adds caching functionality to methods annotated with @Cached.
+ * It uses LRU/LFU caching algorithm and checks the cache before retrieving
+ * data from the database. If the data is not in the cache, it stores
+ * it in the cache for future use. DaoProxy uses reflection to extract
+ * the id field of an object for caching purposes.
+ */
 public class DaoProxy implements InvocationHandler {
     private final Cache cacheList;
     private final DaoTemplate cardDao;

@@ -15,7 +15,7 @@ public final class Constants {
     public static String READ_MESSAGE = "Для чтения чека введите путь к файлу";
     public static String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
     public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
-    public static Path DEFAULT_RECEIPT_PATH = Path.of(String.format("tickets", Constants.CASHIER_NUMBER));
+    public static Path DEFAULT_RECEIPT_PATH = Path.of(String.format("tickets/ticket%s.txt", Constants.CASHIER_NUMBER + 1));
     public static Pattern isDigit = Pattern.compile("\\d+");
 
     public static String CREATE_TABLES = """

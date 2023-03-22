@@ -41,7 +41,6 @@ public class CacheFactory {
         }
 
         capacity = (int) data.get("capacity");
-
         type = CacheType.valueOf((String) data.get("type"));
     }
 }
