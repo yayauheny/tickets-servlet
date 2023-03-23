@@ -2,6 +2,7 @@ package com.console.ticket.constants;
 
 import com.console.ticket.entity.Currency;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
 
@@ -14,8 +15,8 @@ public final class Constants {
     public static String RECEIPT_MESSAGE = "Для вывода чека введите номер и количество товара, а также номер дисконтной карты";
     public static String READ_MESSAGE = "Для чтения чека введите путь к файлу";
     public static String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
+    public static String NUMBER_SYMBOL = "\u2116";
     public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
-    public static Path DEFAULT_RECEIPT_PATH = Path.of(String.format("tickets/ticket%s.txt", Constants.CASHIER_NUMBER + 1));
     public static Pattern isDigit = Pattern.compile("\\d+");
 
     public static String CREATE_TABLES = """

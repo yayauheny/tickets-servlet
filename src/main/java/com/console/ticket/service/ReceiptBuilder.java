@@ -43,7 +43,7 @@ public final class ReceiptBuilder {
                 .append(String.format("%s%25s%n%s", Constants.OUTPUT_LINE, "CASH RECEIPT", Constants.OUTPUT_LINE))
                 .append(String.format("%26s%n", company.getName()))
                 .append(String.format("%s%n%n", company.getAddress()))
-                .append("CASHIER №:" + Constants.CASHIER_NUMBER)
+                .append(String.format("CASHIER %s:%d", Constants.NUMBER_SYMBOL, Constants.CASHIER_NUMBER))
                 .append(String.format(("%18s%-17s%n"), "Date: ", DateTimeService.getCurrentDate()))
                 .append(String.format(("%29s%-17s%n%s"), "Time: ", DateTimeService.getCurrentTime(), Constants.OUTPUT_LINE))
                 .append("QTY:  ")
