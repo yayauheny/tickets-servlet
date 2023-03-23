@@ -3,9 +3,13 @@ package com.console.ticket.service;
 
 import com.console.ticket.constants.Constants;
 import com.console.ticket.exception.FileException;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 
+import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,12 +23,14 @@ import java.util.Comparator;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileService {
     private static String ticketInputLog;
+    private static Path backgroundPdf;
 
     public static void writeReceipt(String receipt) throws FileException {
-        File file = Constants.DEFAULT_RECEIPT_PATH.toFile();
+        File outputFile = new File((String.format("tickets/ticket%s.pdf", Constants.CASHIER_NUMBER)));
         try {
-            Files.write(Path.of(file.toURI()), receipt.getBytes());
-        } catch (IOException e) {
+            buildPdfFile(outputFile, receipt);
+//            Files.write(Path.of(file.toURI()), receipt.getBytes());
+        } catch (FileException e) {
             throw new FileException("Exception while writing to file: ", e);
         }
     }
@@ -38,24 +44,35 @@ public final class FileService {
         }
     }
 
-    public static void clearReceiptFolder(Path path) throws FileException {
-        try {
-            Files.walk(path)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (IOException e) {
-            throw new FileException("Exception while deleting receipt files: ", e);
-        }
-    }
 
-
-    public static String parseFileToString(Path path) throws FileException {
+    private static File buildPdfFile(File file, String text) {
+        backgroundPdf = Path.of("src/main/resources/Clevertec_Template.pdf");
+        Paragraph paragraph;
+        Document document = new Document();
         try {
-            String receipt = Files.readString(path, StandardCharsets.UTF_8);
-            return receipt;
-        } catch (IOException e) {
-            throw new FileException("Exception while parsing receipt file to String value: ", e);
+            PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(file.toPath()));
+            PdfReader reader = new PdfReader(backgroundPdf.toString());
+
+            document.open();
+            PdfImportedPage backgroundPage = writer.getImportedPage(reader, 1);
+            PdfContentByte contentByte = writer.getDirectContent();
+            contentByte.addTemplate(backgroundPage, 0, 0);
+
+            Font font = new Font(Font.FontFamily.HELVETICA, 18);
+            paragraph = new Paragraph();
+            paragraph.setFont(font);
+            paragraph.setLeading(24);
+            paragraph.setAlignment(Element.ALIGN_CENTER);
+            paragraph.add("\n".repeat(10));
+            paragraph.add(text);
+            document.add(paragraph);
+
+            document.close();
+            writer.close();
+        } catch (IOException | DocumentException e) {
+            throw new FileException("Exception parse file to pdf: ", e);
         }
+
+        return null;
     }
 }
