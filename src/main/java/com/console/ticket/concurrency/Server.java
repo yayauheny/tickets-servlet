@@ -1,35 +1,47 @@
 package com.console.ticket.concurrency;
 
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class Server implements Callable {
+public class Server {
     private int msRangeFrom = 100;
-    private int msRangeTo = 900;
-    private static final Random delayGenerator = new Random();
-    private CopyOnWriteArrayList<Integer> receivedData;
+    private int msRangeTo = 1000;
+    private ReentrantLock serverLock = new ReentrantLock(true);
+    private List<Integer> receivedData;
 
-    public Server(CopyOnWriteArrayList<Integer> receivedData) {
+    public Server(List<Integer> receivedData) {
         this.receivedData = receivedData;
     }
 
-    public void addElement(Request request) throws InterruptedException {
-        Integer elementFromRequest = request.getValue();
-        long delayInMs = delayGenerator.nextInt(msRangeTo) + msRangeFrom;
+    public void addElement(Request request) {
+        try {
+            serverLock.lock();
 
-        Thread.currentThread().sleep(delayInMs);
+            Integer elementFromRequest = request.getValue();
+            long delayInMs = ThreadLocalRandom.current().nextInt(msRangeFrom, msRangeTo);
 
-        this.receivedData.add(elementFromRequest);
+            Thread.currentThread().sleep(delayInMs);
+
+            receivedData.add(elementFromRequest);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            serverLock.unlock();
+        }
     }
 
-    private Response getCurrentSize(){
-        Integer currentSize = receivedData.size();
+    public Response getCurrentSize() {
+        Integer currentSize;
+
+        try {
+            serverLock.lock();
+            currentSize = receivedData.size();
+
+        } finally {
+            serverLock.unlock();
+        }
 
         return new Response(currentSize);
-    }
-    @Override
-    public Object call() throws Exception {
-        return getCurrentSize();
     }
 }

@@ -1,37 +1,58 @@
 package com.console.ticket.concurrency;
 
-import java.util.Random;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Client implements Callable {
-    private Random indexGenerator;
-    private static CountDownLatch accumulatorAccessCounter = new CountDownLatch(1);
-    private int accumulator;
-    private static CopyOnWriteArrayList<Integer> sendData;
 
-    public Client(CopyOnWriteArrayList<Integer> sendData) {
+    private ReentrantLock clientLock = new ReentrantLock(true);
+    private AtomicInteger accumulator;
+    private static List<Integer> sendData;
+
+    public Client(List<Integer> sendData) {
         this.sendData = sendData;
-        this.indexGenerator = new Random(sendData.size());
     }
 
-    private Request remove() {
-        int deletableIndex = indexGenerator.nextInt(sendData.size());
-        Integer removedElement = sendData.remove(deletableIndex);
-
-        return new Request(removedElement);
+    public int getAccumulator() {
+        return accumulator.get();
     }
 
-    public void calculateAccumulator(Response response) throws InterruptedException {
-        accumulatorAccessCounter.await();
+    private Integer remove() {
+        Integer removedElement;
 
-        int receivedListSize = response.getListSize();
-        this.accumulator += receivedListSize;
+        try {
+            clientLock.lock();
 
-        accumulatorAccessCounter.countDown();
+            int deletableIndex = ThreadLocalRandom.current().nextInt(sendData.size());
+            removedElement = sendData.remove(deletableIndex);
+        } finally {
+            clientLock.unlock();
+        }
+
+        return removedElement;
+    }
+
+    public void calculateAccumulator(Response response) {
+        if (!clientLock.isLocked()) {
+            try {
+                clientLock.lock();
+
+                int receivedListSize = response.getListSize();
+                accumulator.addAndGet(receivedListSize);
+            } finally {
+                clientLock.unlock();
+            }
+        }
     }
 
     @Override
-    public Object call() throws Exception {
-        return remove();
+    public Request call() throws Exception {
+        Integer elementToSend = remove();
+        Request request = new Request(elementToSend);
+
+        return request;
     }
 }
