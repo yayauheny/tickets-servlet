@@ -9,8 +9,8 @@ public class ConcurrencyRunner {
 
     public static void main(String[] args) throws InterruptedException {
         ExecutorService threadPool = Executors.newFixedThreadPool(threadsQuantity);
-        BlockingQueue<Future> requestsFromClientQueue = new LinkedBlockingQueue<>();
-        BlockingQueue<Future> responsesFromServerQueue = new LinkedBlockingQueue<>();
+        BlockingQueue<Future<Request>> requestsFromClientQueue = new LinkedBlockingQueue<>(queueCapacity);
+        BlockingQueue<Future<Response>> responsesFromServerQueue = new LinkedBlockingQueue<>(queueCapacity);
 
         CopyOnWriteArrayList<Integer> integerList = getIntegerQueue(queueCapacity);
         CopyOnWriteArrayList<Integer> emptyList = getIntegerQueue(0);
@@ -18,17 +18,18 @@ public class ConcurrencyRunner {
         Client client = new Client(integerList);
         Server server = new Server(emptyList);
 
-        while (integerList.size() > 0) {
+        while (queueCapacity > 0) {
             Future<Request> requestFuture = threadPool.submit(client::call);
             requestsFromClientQueue.add(requestFuture);
+            queueCapacity--;
         }
 
         while (!requestsFromClientQueue.isEmpty()) {
-            Future maybeDone = requestsFromClientQueue.poll();
+            Future<Request> maybeDone = requestsFromClientQueue.poll();
 
             try {
                 if (maybeDone.isDone()) {
-                    Request requestFromClient = (Request) maybeDone.get();
+                    Request requestFromClient = maybeDone.get();
                     threadPool.submit(() -> server.addElement(requestFromClient));
 
                     Future<Response> responseFuture = threadPool.submit(server::getCurrentSize);
@@ -42,10 +43,10 @@ public class ConcurrencyRunner {
         }
 
         while (!responsesFromServerQueue.isEmpty()) {
-            Future maybeResponse = requestsFromClientQueue.poll();
+            Future<Response> maybeResponse = responsesFromServerQueue.poll();
             try {
                 if (maybeResponse.isDone()) {
-                    Response responseFromServer = (Response) maybeResponse.get();
+                    Response responseFromServer = maybeResponse.get();
                     threadPool.submit(() -> client.calculateAccumulator(responseFromServer));
                 } else {
                     responsesFromServerQueue.add(maybeResponse);
@@ -64,7 +65,7 @@ public class ConcurrencyRunner {
     private static CopyOnWriteArrayList<Integer> getIntegerQueue(int size) throws InterruptedException {
         CopyOnWriteArrayList<Integer> integerQueue = new CopyOnWriteArrayList<>(new Integer[size]);
 
-        IntStream.range(0, size-1)
+        IntStream.rangeClosed(0, size-1)
                 .forEach(index -> integerQueue.set(index, index + 5));
 
         return integerQueue;
