@@ -12,14 +12,11 @@ import java.util.stream.Stream;
 public class Client implements Callable<Request> {
 
     private final ReentrantLock removeLock = new ReentrantLock(true);
-    private final ReentrantLock calculateAccumulatorLock = new ReentrantLock(true);
     private final AtomicInteger accumulator = new AtomicInteger(0);
     private ExecutorService clientExecutor;
     private List<Integer> sendData;
     private Queue<Future<Request>> requestsFromClientQueue;
     private Queue<Future<Response>> responsesFromServerQueue;
-//    private List<Future<Request>> requestsFromClientQueue;
-//    private List<Future<Response>> responsesFromServerQueue;
 
     public Client(List<Integer> sendData) {
         this.sendData = sendData;
@@ -39,28 +36,28 @@ public class Client implements Callable<Request> {
         executeResponsesFromServer(responsesFromServerQueue);
 
         clientExecutor.shutdown();
-        try{
+        try {
             clientExecutor.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     private void executeResponsesFromServer(Queue<Future<Response>> responsesQueue) {
-        while (!responsesQueue.isEmpty()) {
-            Future<Response> maybeResponse = responsesQueue.poll();
-
-            try {
-                if (maybeResponse.isDone()) {
-                    Response responseFromServer = maybeResponse.get();
-                    clientExecutor.submit(() -> calculateAccumulator(responseFromServer));
-                } else {
-                    responsesQueue.add(maybeResponse);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
+        Stream.generate(responsesQueue::poll)
+                .takeWhile(Objects::nonNull)
+                .forEach(responseFuture -> {
+                    try {
+                        if (responseFuture.isDone()) {
+                            Response responseFromServer = responseFuture.get();
+                            clientExecutor.submit(() -> calculateAccumulator(responseFromServer));
+                        } else {
+                            responsesQueue.add(responseFuture);
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void putAllRequestsFromClient(int queueSize, Queue<Future<Request>> requestsQueue) {
@@ -99,22 +96,15 @@ public class Client implements Callable<Request> {
 
             int deletableIndex = ThreadLocalRandom.current().nextInt(sendData.size());
             removedElement = sendData.remove(deletableIndex);
+            return removedElement;
         } finally {
             removeLock.unlock();
         }
-
-        return removedElement;
     }
 
     public void calculateAccumulator(Response response) {
-        try {
-            calculateAccumulatorLock.lock();
-
-            int receivedListSize = response.getListSize();
-            accumulator.addAndGet(receivedListSize);
-        } finally {
-            calculateAccumulatorLock.unlock();
-        }
+        int receivedListSize = response.getListSize();
+        accumulator.addAndGet(receivedListSize);
     }
 
     @Override

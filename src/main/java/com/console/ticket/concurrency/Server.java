@@ -1,5 +1,6 @@
 package com.console.ticket.concurrency;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -7,18 +8,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
-    private final int MS_RANGE_FROM = 1;
-    private final int MS_RANGE_TO = 10;
-    private final List<Integer> receivedData = new CopyOnWriteArrayList<Integer>();
-    private ReentrantLock addElementLock = new ReentrantLock(true);
-    private ReentrantLock getCurrentSizeLock = new ReentrantLock(true);
+    private static final int MS_RANGE_FROM = 1;
+    private static final int MS_RANGE_TO = 10;
+    private List<Integer> receivedData = new ArrayList<>();
+    private ReentrantLock receivedDataLock = new ReentrantLock(true);
 
     public Server() {
     }
 
     public void addElement(Request request) {
         try {
-            addElementLock.lock();
+            receivedDataLock.lock();
 
             Integer elementFromRequest = request.getValue();
             long delayInMs = ThreadLocalRandom.current().nextInt(MS_RANGE_FROM, MS_RANGE_TO);
@@ -27,22 +27,21 @@ public class Server {
 
             receivedData.add(elementFromRequest);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } finally {
-            addElementLock.unlock();
+            receivedDataLock.unlock();
         }
     }
 
     public Response getCurrentSize() {
-        Integer currentSize;
+        int currentSize;
 
         try {
-            getCurrentSizeLock.lock();
+            receivedDataLock.lock();
             currentSize = receivedData.size();
+            return new Response(currentSize);
         } finally {
-            getCurrentSizeLock.unlock();
+            receivedDataLock.unlock();
         }
-
-        return new Response(currentSize);
     }
 }

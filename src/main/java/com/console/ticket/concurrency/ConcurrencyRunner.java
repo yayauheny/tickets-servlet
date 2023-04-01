@@ -1,15 +1,16 @@
 package com.console.ticket.concurrency;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 public class ConcurrencyRunner {
-    private static int threadsQuantity = 2;
-    private static int queueCapacity = 20;
+    private static int threadsQuantity = 8;
+    private static int queueCapacity = 100;
 
-    public static void main(String[] args) throws InterruptedException {
-        CopyOnWriteArrayList<Integer> integerList = getIntegerQueue(queueCapacity);
-//        CopyOnWriteArrayList<Integer> emptyList = getIntegerQueue(0);
+    public static void main(String[] args){
+        List<Integer> integerList = getIntegerQueue(queueCapacity);
 
         Client client = new Client(integerList);
         Server server = new Server();
@@ -18,11 +19,13 @@ public class ConcurrencyRunner {
         System.out.println(client.getAccumulator());
     }
 
-    private static CopyOnWriteArrayList<Integer> getIntegerQueue(int size) throws InterruptedException {
-        CopyOnWriteArrayList<Integer> integerQueue = new CopyOnWriteArrayList<>(new Integer[size]);
+    private static List<Integer> getIntegerQueue(int size){
+        ArrayList<Integer> integerQueue = new ArrayList<>();
+        integerQueue.ensureCapacity(size);
 
-        IntStream.rangeClosed(0, size - 1)
-                .forEach(index -> integerQueue.set(index, index + 5));
+
+        IntStream.range(0, size)
+                .forEach(index -> integerQueue.add(index, index + 5));
 
         return integerQueue;
     }
