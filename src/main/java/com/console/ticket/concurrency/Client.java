@@ -11,10 +11,11 @@ import java.util.stream.Stream;
 
 public class Client implements Callable<Request> {
 
-    private final ReentrantLock removeLock = new ReentrantLock(true);
+    private final ReentrantLock sendDataLock = new ReentrantLock(true);
+    private final ReentrantLock accumulatorLock = new ReentrantLock(true);
     private final AtomicInteger accumulator = new AtomicInteger(0);
+    private final List<Integer> sendData;
     private ExecutorService clientExecutor;
-    private List<Integer> sendData;
     private Queue<Future<Request>> requestsFromClientQueue;
     private Queue<Future<Response>> responsesFromServerQueue;
 
@@ -23,7 +24,12 @@ public class Client implements Callable<Request> {
     }
 
     public int getAccumulator() {
-        return accumulator.get();
+        try {
+            accumulatorLock.lock();
+            return accumulator.get();
+        } finally {
+            accumulatorLock.unlock();
+        }
     }
 
     public void start(Server server, int threadsQuantity, int queueSize) {
@@ -75,9 +81,11 @@ public class Client implements Callable<Request> {
                     try {
                         if (requestFuture.isDone()) {
                             Request requestFromClient = requestFuture.get();
-                            clientExecutor.submit(() -> server.addElement(requestFromClient));
+                            Future<?> assertElementWasAdded = clientExecutor.submit(() -> server.addElement(requestFromClient));
+                            assertElementWasAdded.get();
 
                             Future<Response> responseFuture = clientExecutor.submit(server::getCurrentSize);
+                            responseFuture.get();
                             responsesQueue.add(responseFuture);
                         } else {
                             requestsQueue.add(requestFuture);
@@ -92,17 +100,18 @@ public class Client implements Callable<Request> {
         Integer removedElement;
 
         try {
-            removeLock.lock();
+            sendDataLock.lock();
 
             int deletableIndex = ThreadLocalRandom.current().nextInt(sendData.size());
             removedElement = sendData.remove(deletableIndex);
-            return removedElement;
+
         } finally {
-            removeLock.unlock();
+            sendDataLock.unlock();
         }
+        return removedElement;
     }
 
-    public void calculateAccumulator(Response response) {
+    private void calculateAccumulator(Response response) {
         int receivedListSize = response.getListSize();
         accumulator.addAndGet(receivedListSize);
     }
@@ -112,5 +121,14 @@ public class Client implements Callable<Request> {
         Integer elementToSend = remove();
 
         return new Request(elementToSend);
+    }
+
+    public int getSendDataSize() {
+        try {
+            sendDataLock.lock();
+            return sendData.size();
+        } finally {
+            sendDataLock.unlock();
+        }
     }
 }

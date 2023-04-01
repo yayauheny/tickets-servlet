@@ -6,22 +6,23 @@ import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 public class ConcurrencyRunner {
-    private static int threadsQuantity = 8;
+
+    private static int threadsQuantity = 3;
     private static int queueCapacity = 100;
 
     public static void main(String[] args){
         List<Integer> integerList = getIntegerQueue(queueCapacity);
+        List<Integer> empty = getIntegerQueue(0);
 
         Client client = new Client(integerList);
-        Server server = new Server();
+        Server server = new Server(empty);
 
         client.start(server, threadsQuantity, queueCapacity);
         System.out.println(client.getAccumulator());
     }
 
-    private static List<Integer> getIntegerQueue(int size){
-        ArrayList<Integer> integerQueue = new ArrayList<>();
-        integerQueue.ensureCapacity(size);
+    private static CopyOnWriteArrayList<Integer> getIntegerQueue(int size){
+        CopyOnWriteArrayList<Integer> integerQueue = new CopyOnWriteArrayList<>();
 
 
         IntStream.range(0, size)

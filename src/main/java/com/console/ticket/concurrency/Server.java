@@ -8,12 +8,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
+
     private static final int MS_RANGE_FROM = 1;
     private static final int MS_RANGE_TO = 10;
-    private List<Integer> receivedData = new ArrayList<>();
-    private ReentrantLock receivedDataLock = new ReentrantLock(true);
+    private final List<Integer> receivedData;
+    private final ReentrantLock receivedDataLock = new ReentrantLock(true);
 
-    public Server() {
+    public Server(List<Integer> receivedData) {
+        this.receivedData = receivedData;
     }
 
     public void addElement(Request request) {
@@ -34,14 +36,16 @@ public class Server {
     }
 
     public Response getCurrentSize() {
+
         int currentSize;
 
         try {
             receivedDataLock.lock();
             currentSize = receivedData.size();
-            return new Response(currentSize);
         } finally {
             receivedDataLock.unlock();
         }
+
+        return new Response(currentSize);
     }
 }
