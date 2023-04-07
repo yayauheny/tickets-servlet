@@ -1,5 +1,8 @@
 package com.console.ticket.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class SqlRequestsUtil {
     public static String PRODUCT_FIND = """
             SELECT * FROM company.product WHERE id = ?

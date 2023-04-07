@@ -1,16 +1,16 @@
 package com.console.ticket.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.util.Properties;
+@UtilityClass
+public class PropertiesUtil {
 
-public final class PropertiesUtil {
     public static final Properties PROPERTIES = new Properties();
 
     static {
         loadProperties();
-    }
-
-    private PropertiesUtil() {
     }
 
     private static void loadProperties() {

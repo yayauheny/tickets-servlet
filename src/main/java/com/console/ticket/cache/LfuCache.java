@@ -2,45 +2,49 @@ package com.console.ticket.cache;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * Least Frequently Used (LFU) cache implementation for
- * storing, getting, deleting and updating data.
- * This class provides similar functionality to a collection,
- * but also tracks the usage count of each element.
- * The LFU cache removes the least frequently used element,
+ * This is a class with LFU implementation for caching data.
+ *
+ * <p>The LFU cache removes the least frequently used element,
  * taking into account both the frequency and recency of usage,
- * when the cache size exceeds its capacity.
+ * when the cache size exceeds its capacity.</p>
  */
 
 public class LfuCache implements Cache {
-    private Map<Integer, ListNode> keyMap = new HashMap<>();
-    private Map<Integer, DoublyList> freqMap = new HashMap<>();
-    private int curCapacity, maxCapacity, DEFAULT_CAPACITY = 3;
+    private final static int DEFAULT_CAPACITY = 3;
+    private final Map<Integer, ListNode<Object>> keyToNodeMap = new HashMap<>();
+    private final Map<Integer, DoublyLinkedList<Object>> freqToListMap = new HashMap<>();
+    private final int maxCapacity;
+    private int currentCapacity;
 
     public LfuCache(int capacity) {
         if (capacity > 0) {
             this.maxCapacity = capacity;
-        } else maxCapacity = DEFAULT_CAPACITY;
+        } else {
+            maxCapacity = DEFAULT_CAPACITY;
+        }
     }
 
     @Override
     public <T> T get(int key) {
-        if (!keyMap.containsKey(key))
+        if (!keyToNodeMap.containsKey(key)) {
             return null;
-        // Retrive current node from current freq list
-        ListNode curNode = getNode(key);
-        return (T) curNode.value;
+        }
+
+        ListNode<T> currentNode = getNode(key);
+        return Objects.requireNonNull(currentNode).value;
     }
 
     @Override
     public void delete(int key) {
-        if (keyMap.containsKey(key)) {
-            ListNode node = keyMap.get(key);
-            DoublyList list = freqMap.get(node.freq);
+        if (keyToNodeMap.containsKey(key)) {
+            ListNode<Object> node = keyToNodeMap.get(key);
+            DoublyLinkedList<Object> list = freqToListMap.get(node.freq);
             list.deleteNode(key);
-            keyMap.remove(key);
-            curCapacity--;
+            keyToNodeMap.remove(key);
+            currentCapacity--;
         }
     }
 
@@ -49,91 +53,84 @@ public class LfuCache implements Cache {
         if (maxCapacity == 0) {
             return;
         }
-        // Update value
-        if (keyMap.containsKey(key)) {
-            // Retrieve current node from current freq list
-            ListNode curNode = getNode(key);
-            curNode.value = value;
+
+        if (keyToNodeMap.containsKey(key)) {
+            ListNode<Object> currentNode = getNode(key);
+            Objects.requireNonNull(currentNode).value = value;
         } else {
-            // Insert value (maybe adjust the size)
-            if (curCapacity == maxCapacity) {
+            if (currentCapacity == maxCapacity) {
                 int lowestFreq = Integer.MAX_VALUE;
 
-                for (Integer freq : freqMap.keySet()) {
-                    if (freqMap.get(freq).map.isEmpty()) {
+                for (Integer freq : freqToListMap.keySet()) {
+                    if (freqToListMap.get(freq).map.isEmpty()) {
                         continue;
                     }
                     lowestFreq = Math.min(lowestFreq, freq);
                 }
 
-                DoublyList list = freqMap.get(lowestFreq);
-                ListNode curNode = list.deleteHead();
-                keyMap.remove(curNode.key);
-                curCapacity--;
+                DoublyLinkedList<Object> list = freqToListMap.get(lowestFreq);
+                ListNode<Object> currentNode = list.deleteHead();
+                keyToNodeMap.remove(currentNode.key);
+                currentCapacity--;
             }
 
-            int curFreq = 1;
-            ListNode curNode = new ListNode(value, key);
-            keyMap.put(key, curNode);
-            if (!freqMap.containsKey(curFreq)) {
-                freqMap.put(curFreq, new DoublyList());
+            int currentFreq = 1;
+            ListNode<Object> currentNode = new ListNode<>(value, key);
+            keyToNodeMap.put(key, currentNode);
+
+            if (!freqToListMap.containsKey(currentFreq)) {
+                freqToListMap.put(currentFreq, new DoublyLinkedList<>());
             }
 
-            freqMap.get(curFreq).addNode(curNode);
-            curCapacity++;
+            freqToListMap.get(currentFreq).addNode(currentNode);
+            currentCapacity++;
         }
     }
 
-    private ListNode getNode(int key) {
-        if (!keyMap.containsKey(key))
+    private <T> ListNode<T> getNode(int key) {
+        if (!keyToNodeMap.containsKey(key)) {
             return null;
-        // Retrive current node
-        ListNode curNode = keyMap.get(key);
-
-        // Remove curNode from current freq list
-        DoublyList list = freqMap.get(curNode.freq);
-        list.deleteNode(key);
-
-        // Update the freq of current node
-        curNode.freq++;
-
-        // Add curNode onto a higher freq list
-        if (!freqMap.containsKey(curNode.freq)) {
-            freqMap.put(curNode.freq, new DoublyList());
         }
-        freqMap.get(curNode.freq).addNode(curNode);
-        return curNode;
+
+        ListNode<T> currentNode = (ListNode<T>) keyToNodeMap.get(key);
+        DoublyLinkedList<Object> list = freqToListMap.get(currentNode.freq);
+        list.deleteNode(key);
+        currentNode.freq++;
+        if (!freqToListMap.containsKey(currentNode.freq)) {
+            freqToListMap.put(currentNode.freq, new DoublyLinkedList<>());
+        }
+        freqToListMap.get(currentNode.freq).addNode((ListNode<Object>) currentNode);
+        return currentNode;
     }
 
-
-    class ListNode<T> {
-        ListNode prev, next;
+    static class ListNode<T> {
+        ListNode<T> prev, next;
         int key, freq;
         T value;
 
         ListNode() {
         }
 
-        ListNode(T val, int key) {
-            this.value = val;
+        ListNode(T value, int key) {
+            this.value = value;
             this.key = key;
             this.freq = 1;
         }
     }
 
-    class DoublyList {
-        Map<Integer, ListNode> map = new HashMap<>();
-        ListNode head, tail;
+    static class DoublyLinkedList<T> {
+        Map<Integer, ListNode<T>> map = new HashMap<>();
+        ListNode<T> head, tail;
 
-        public DoublyList() {
-            head = new ListNode();
-            tail = new ListNode();
+        public DoublyLinkedList() {
+            head = new ListNode<>();
+            tail = new ListNode<>();
             tail.prev = head;
             head.next = tail;
         }
 
-        public void addNode(ListNode curNode) {
-            ListNode tailPrev = tail.prev;
+        public void addNode(ListNode<T> curNode) {
+            ListNode<T> tailPrev = tail.prev;
             tailPrev.next = curNode;
             curNode.prev = tailPrev;
             tail.prev = curNode;
@@ -142,13 +139,13 @@ public class LfuCache implements Cache {
             map.put(curNode.key, curNode);
         }
 
-        public ListNode deleteNode(int key) {
+        public ListNode<T> deleteNode(int key) {
             if (!map.containsKey(key)) {
                 return null;
             }
-            ListNode curNode = map.get(key);
-            ListNode prevNode = curNode.prev;
-            ListNode nextNode = curNode.next;
+            ListNode<T> curNode = map.get(key);
+            ListNode<T> prevNode = curNode.prev;
+            ListNode<T> nextNode = curNode.next;
 
             prevNode.next = nextNode;
             nextNode.prev = prevNode;
@@ -157,11 +154,11 @@ public class LfuCache implements Cache {
             return curNode;
         }
 
-        public ListNode deleteHead() {
+        public ListNode<T> deleteHead() {
             if (head.next == tail) {
                 return null;
             }
-            ListNode firstNode = head.next;
+            ListNode<T> firstNode = head.next;
             return deleteNode(firstNode.key);
         }
     }

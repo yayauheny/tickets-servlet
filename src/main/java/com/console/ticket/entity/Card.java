@@ -2,15 +2,10 @@ package com.console.ticket.entity;
 
 //номер карты
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @Builder
-@EqualsAndHashCode
 public class Card {
     private Integer id;
     private Double discountSize;

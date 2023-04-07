@@ -3,7 +3,7 @@ package com.console.ticket.service.impl;
 import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.data.ProductDao;
 import com.console.ticket.entity.Product;
-import com.console.ticket.service.proxy.DaoProxy;
+import com.console.ticket.service.proxy.CachingDaoInvocationHandler;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -18,9 +18,9 @@ public class ProductServiceImpl implements DaoService<Product> {
         this.productDao = productDao;
 
         proxyInstance = (DaoTemplate<Product>) Proxy.newProxyInstance(
-                productDao.getClass().getClassLoader(),
-                productDao.getClass().getInterfaces(),
-                new DaoProxy(productDao));
+                this.productDao.getClass().getClassLoader(),
+                this.productDao.getClass().getInterfaces(),
+                new CachingDaoInvocationHandler(productDao));
     }
 
     @Override

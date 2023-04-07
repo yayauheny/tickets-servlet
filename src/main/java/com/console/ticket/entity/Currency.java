@@ -8,7 +8,7 @@ public enum Currency {
     USA("$"),
     FRANCE("€");
 
-    private String currency;
+    private final String currency;
 
     Currency(String currency) {
         this.currency = currency;

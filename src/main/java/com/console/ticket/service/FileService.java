@@ -12,9 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Запись и чтение в/из файла
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileService {
     private static String ticketInputLog;

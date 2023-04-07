@@ -1,14 +1,9 @@
 package com.console.ticket.entity;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @Builder
-@EqualsAndHashCode
 public class Product {
     private int id;
     private String name;
