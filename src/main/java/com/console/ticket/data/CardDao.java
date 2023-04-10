@@ -53,17 +53,24 @@ public class CardDao implements DaoTemplate<Card> {
     }
 
     @Override
-    public void delete(Integer id) throws DatabaseException, InputException {
+    public void delete(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
-            throw new InputException("Error find card by id: " + id);
+            throw new InputException("Incorrect id format: " + id);
         }
+
+        boolean isDeleted = false;
 
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_DELETE)) {
             preparedStatement.setObject(1, id);
-            preparedStatement.executeUpdate();
+
+            isDeleted = (preparedStatement.executeUpdate() > 0);
         } catch (SQLException e) {
             throw new DatabaseException("Error delete card by id: " + id, e);
+        }
+
+        if (!isDeleted) {
+            throw new DatabaseException("No card found by id: " + id);
         }
     }
 
@@ -75,11 +82,12 @@ public class CardDao implements DaoTemplate<Card> {
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
+
             if (keys.next()) {
                 card.setId(keys.getInt("id"));
             }
 
-            return Optional.ofNullable(card);
+            return Optional.of(card);
         } catch (SQLException e) {
             throw new DatabaseException("Error save card: " + card.getId(), e);
         }

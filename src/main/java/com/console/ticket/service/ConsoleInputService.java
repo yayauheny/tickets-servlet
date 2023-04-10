@@ -114,7 +114,7 @@ public class ConsoleInputService {
         return productList;
     }
 
-    private static void createSqlTables() throws DatabaseException {
+    public static void createSqlTables() throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var statement = connection.createStatement()) {
             statement.execute(Constants.CREATE_TABLES);

@@ -14,8 +14,7 @@ public class SqlRequestsUtil {
             DELETE FROM company.product WHERE id = ?
             """;
     public static String PRODUCT_SAVE = """
-            INSERT INTO company.product (name, quantity, price, discount) 
-            VALUES (?, ?, ?, ?);
+            INSERT INTO company.product (name, quantity, price, discount) VALUES (?, ?, ?, ?);
             """;
     public static String PRODUCT_UPDATE = """
             UPDATE company.product
