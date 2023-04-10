@@ -78,6 +78,7 @@ public class ProductDao implements DaoTemplate<Product> {
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
+
             if (keys.next()) {
                 product.setId(keys.getInt("id"));
             }

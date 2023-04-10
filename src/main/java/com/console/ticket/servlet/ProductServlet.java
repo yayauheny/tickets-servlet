@@ -5,6 +5,7 @@ import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.service.impl.ProductServiceImpl;
+import com.console.ticket.util.ServletsUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,6 +24,7 @@ public class ProductServlet extends HttpServlet {
 
     private static final ProductDao productDao = ProductDao.getInstance();
     private static final ProductServiceImpl productService = new ProductServiceImpl(productDao);
+    public static final Gson gsonParser = new Gson();
 
     static {
         try {
@@ -32,19 +34,19 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String responseOutput;
 
         try (PrintWriter writer = resp.getWriter()) {
-            Integer id = Integer.parseInt(req.getParameter("id"));
+            Integer id = ServletsUtil.getIntegerParameterFromRequest(req, "id");
 
             Optional<Product> product = productService.findById(id);
 
-            Gson parser = new Gson();
             if (product.isPresent()) {
                 resp.setContentType("application/json");
-                responseOutput = parser.toJson(product);
+                responseOutput = gsonParser.toJson(product);
                 resp.setStatus(200);
             } else {
                 resp.setContentType("text/plain");
@@ -63,11 +65,11 @@ public class ProductServlet extends HttpServlet {
         String responseOutput;
 
         try (PrintWriter writer = resp.getWriter()) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            int quantity = Integer.parseInt(req.getParameter("quantity"));
-            double price = Double.parseDouble(req.getParameter("price"));
-            boolean discount = Boolean.getBoolean(req.getParameter("discount"));
-            String name = req.getParameter("name");
+            int id = ServletsUtil.getIntegerParameterFromRequest(req, "id");
+            int quantity = ServletsUtil.getIntegerParameterFromRequest(req, "quantity");
+            double price = ServletsUtil.getDoubleParameterFromRequest(req, "price");
+            boolean discount = ServletsUtil.getBooleanParameterFromRequest(req, "discount");
+            String name = ServletsUtil.getStringParameterFromRequest(req, "name");
 
             Optional<Product> product = productService.save(Product.builder()
                     .id(id)
@@ -77,9 +79,8 @@ public class ProductServlet extends HttpServlet {
                     .isDiscount(discount)
                     .build());
 
-            Gson parser = new Gson();
             if (product.isPresent()) {
-                responseOutput = "Product %s was saved successfully".formatted(parser.toJson(product));
+                responseOutput = "Product %s was saved successfully".formatted(gsonParser.toJson(product));
 
                 resp.setContentType("application/json");
                 resp.setStatus(200);
@@ -101,41 +102,69 @@ public class ProductServlet extends HttpServlet {
         String responseOutput;
 
         try (PrintWriter writer = resp.getWriter()) {
-            int id = Integer.parseInt(req.getParameter("id"));
-            int quantity = Integer.parseInt(req.getParameter("quantity"));
-            double price = Double.parseDouble(req.getParameter("price"));
-            boolean discount = Boolean.getBoolean(req.getParameter("discount"));
-            String name = req.getParameter("name");
+            Optional<Product> maybeProductFromRequest = getProductFromRequest(req);
+            Optional<Product> maybeUpdatedProduct = Optional.empty();
 
-            Optional<Product> maybeProduct = productService.findById(id);
+            if (maybeProductFromRequest.isPresent()) {
+                Product updatedProduct = updateAndGetProduct(maybeProductFromRequest.get());
+                maybeUpdatedProduct = Optional.of(updatedProduct);
+            }
 
-            Gson parser = new Gson();
-            if (maybeProduct.isPresent()) {
-                Product updatedProduct = Product.builder()
-                        .id(id)
-                        .name(name)
-                        .quantity(quantity)
-                        .price(price)
-                        .isDiscount(discount)
-                        .build();
-                productService.update(updatedProduct);
+            if (maybeUpdatedProduct.isPresent()) {
+                responseOutput = configureResponse(resp, maybeUpdatedProduct.get());
 
-                responseOutput = "Product %s was updated successfully".formatted(parser.toJson(updatedProduct));
-
-                resp.setContentType("application/json");
-                resp.setStatus(200);
             } else {
-                responseOutput = "Data is invalid. Try again";
-
                 resp.setContentType("text/plain");
                 resp.setStatus(400);
+
+                responseOutput = "Data is invalid. Try again";
             }
 
             writer.write(responseOutput);
-        } catch (NumberFormatException e) {
+        } catch (
+                NumberFormatException e) {
             throw new InputException("Exception read data from client: " + e);
         }
+
     }
+
+    private static String configureResponse(HttpServletResponse resp, Product updatedProduct) {
+        String responseOutput;
+        resp.setContentType("application/json");
+        resp.setStatus(200);
+
+        responseOutput = "Product %s was updated successfully".formatted(
+                gsonParser.toJson(updatedProduct));
+        return responseOutput;
+    }
+
+    private Product updateAndGetProduct(Product modifiedProduct) {
+        int productId = modifiedProduct.getId();
+        updateProductIfExists(modifiedProduct, productId);
+
+        return modifiedProduct;
+    }
+
+    private static void updateProductIfExists(Product modifiedProduct, int existingProductId) {
+        productService.findById(existingProductId).ifPresent(product -> productService.update(modifiedProduct));
+    }
+
+    private Optional<Product> getProductFromRequest(HttpServletRequest req) throws NumberFormatException {
+        int id = ServletsUtil.getIntegerParameterFromRequest(req, "id");
+        int quantity = ServletsUtil.getIntegerParameterFromRequest(req, "quantity");
+        double price = ServletsUtil.getDoubleParameterFromRequest(req, "price");
+        boolean discount = ServletsUtil.getBooleanParameterFromRequest(req, "discount");
+        String name = ServletsUtil.getStringParameterFromRequest(req, "name");
+
+        return Optional.ofNullable(Product.builder()
+                .id(id)
+                .quantity(quantity)
+                .price(price)
+                .isDiscount(discount)
+                .name(name)
+                .build());
+    }
+
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -143,20 +172,15 @@ public class ProductServlet extends HttpServlet {
         resp.setContentType("text/plain");
 
         try (PrintWriter writer = resp.getWriter()) {
-            int id = Integer.parseInt(req.getParameter("id"));
+            int id = ServletsUtil.getIntegerParameterFromRequest(req, "id");
 
-            try {
-                productService.delete(id);
+            productService.delete(id);
 
-                responseOutput = "Product with id = %d was deleted successfully".formatted(id);
-                resp.setStatus(200);
-            } catch (DatabaseException e) {
-                responseOutput = "e.getMessage()";
-                resp.setStatus(400);
-            }
+            responseOutput = "Product with id = %d was deleted successfully".formatted(id);
+            resp.setStatus(200);
 
             writer.write(responseOutput);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | DatabaseException e) {
             throw new RuntimeException(e.getMessage());
         }
     }

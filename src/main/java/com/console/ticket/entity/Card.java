@@ -7,6 +7,6 @@ import lombok.*;
 @Data
 @Builder
 public class Card {
-    private Integer id;
-    private Double discountSize;
+    private int id;
+    private double discountSize;
 }

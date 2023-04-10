@@ -6,11 +6,11 @@ CREATE TABLE IF NOT EXISTS company.product
     quantity INT,
     price    DECIMAL            NOT NULL,
     discount boolean
-    );
+);
 CREATE TABLE IF NOT EXISTS company.discount_card
 (
-    id       INT UNIQUE         NOT NULL,
-    discount DECIMAL            NOT NULL
+    id       SERIAL PRIMARY KEY,
+    discount DECIMAL NOT NULL
 );
 INSERT INTO company.product (name, price, discount)
 values ('Apple', 1.19, false),
@@ -20,15 +20,15 @@ values ('Apple', 1.19, false),
        ('Chocolate', 8.29, true),
        ('Beef Steak', 17.99, true),
        ('Chocolate Milk', 4.99, true)
-    ON CONFLICT DO NOTHING;
+ON CONFLICT DO NOTHING;
 
-INSERT INTO company.discount_card (id, discount)
-VALUES (1111, 0.1),
-       (2222, 0.2),
-       (1122, 0.6),
-       (2323, 1.9),
-       (5555, 0.1),
-       (4444, 3.3),
-       (7777, 0.3),
-       (9999, 0.5)
-    ON CONFLICT DO NOTHING;
+INSERT INTO company.discount_card (discount)
+VALUES (0.1),
+       (0.2),
+       (0.6),
+       (1.9),
+       (0.1),
+       (3.3),
+       (0.3),
+       (0.5)
+ON CONFLICT DO NOTHING;
