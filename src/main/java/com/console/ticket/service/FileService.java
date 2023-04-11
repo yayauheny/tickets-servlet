@@ -17,7 +17,7 @@ public final class FileService {
     private static String ticketInputLog;
 
     public static void writeReceipt(String receipt) throws FileException {
-        File file = new File((String.format("tickets/ticket%s.txt", Constants.CASHIER_NUMBER)));
+        File file = new File((String.format("tickets/ticket%s.txt", Constants.INCREMENTED_CASHIER_NUMBER)));
         try {
             Files.write(Path.of(file.toURI()), receipt.getBytes());
         } catch (IOException e) {

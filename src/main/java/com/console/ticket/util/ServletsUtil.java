@@ -1,10 +1,17 @@
 package com.console.ticket.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ServletsUtil {
+
+    public static void configureResponse(HttpServletResponse resp, String contentType, int statusCode) {
+        resp.setContentType(contentType);
+        resp.setStatus(statusCode);
+    }
+
     public static String getStringParameterFromRequest(HttpServletRequest req, String paramName) throws NumberFormatException {
         String parameter = req.getParameter(paramName);
 
@@ -12,7 +19,7 @@ public class ServletsUtil {
             throw new NumberFormatException();
         }
 
-        return req.getParameter(parameter);
+        return parameter;
     }
 
     public static boolean getBooleanParameterFromRequest(HttpServletRequest req, String paramName) throws NumberFormatException {
@@ -44,4 +51,5 @@ public class ServletsUtil {
 
         return Integer.parseInt(parameter);
     }
+
 }
