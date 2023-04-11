@@ -24,7 +24,7 @@ public final class ReceiptBuilder {
         RECEIPT = headerInfo.concat(productInfo).concat(totalInfo);
 
         try {
-            FileService.writeReceipt(RECEIPT);
+            FileService.writeAndGetReceipt(RECEIPT);
         } catch (FileException e) {
             System.out.println("Exception write receipt to file: " + e.getMessage());
         }

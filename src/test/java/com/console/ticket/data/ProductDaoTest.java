@@ -35,7 +35,7 @@ class ProductDaoTest {
     @DisplayName("find all database products properly")
     @Test
     void checkFindAllProductsFromDatabaseProperly() {
-        int databaseProductsQuantity = 7;
+        int databaseProductsQuantity = 8;
 
         assertThat(productDao.findAll()).size().isEqualTo(databaseProductsQuantity);
     }

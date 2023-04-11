@@ -35,7 +35,7 @@ class CardDaoTest {
     @DisplayName("find all database cards properly")
     @Test
     void checkFindAllCardsFromDatabaseProperly() {
-        int databaseCardsQuantity = 9;
+        int databaseCardsQuantity = 14;
 
         assertThat(cardDao.findAll()).size().isEqualTo(databaseCardsQuantity);
     }
