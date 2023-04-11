@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.console.ticket.util.ServletsUtil.*;
+
 @WebServlet(value = "/products")
 public class ProductServlet extends HttpServlet {
 
@@ -27,11 +29,7 @@ public class ProductServlet extends HttpServlet {
     private static final ProductServiceImpl productService = new ProductServiceImpl(productDao);
     private static final Gson gsonParser = new Gson();
     private static final String DEFAULT_EXCEPTION_MESSAGE = "Exception read data from client: ";
-    private static final String HTTP_CONTENT_TYPE_JSON = "application/json";
-    private static final String HTTP_CONTENT_TYPE_PLAINTEXT = "text/plain";
-    private static final int HTTP_STATUS_OK = 200;
-    private static final int HTTP_STATUS_NOT_FOUND = 404;
-    private static final int HTTP_STATUS_BAD_REQUEST = 400;
+
 
     static {
         try {
@@ -70,7 +68,7 @@ public class ProductServlet extends HttpServlet {
 
         try (PrintWriter writer = resp.getWriter()) {
             try {
-                Optional<Product> maybeProductFromRequest = getProductFromReq(req);
+                Optional<Product> maybeProductFromRequest = ServletsUtil.getProductFromReq(req);
 
                 if (maybeProductFromRequest.isPresent()) {
                     responseOutput = saveProductAndGetResp(resp, maybeProductFromRequest.get());
@@ -90,7 +88,7 @@ public class ProductServlet extends HttpServlet {
 
         try (PrintWriter writer = resp.getWriter()) {
             try {
-                Optional<Product> maybeProductFromRequest = getProductFromReq(req);
+                Optional<Product> maybeProductFromRequest = ServletsUtil.getProductFromReq(req);
 
                 if (maybeProductFromRequest.isPresent()) {
                     responseOutput = updateProductAndGetResp(resp, maybeProductFromRequest.get());
@@ -168,19 +166,5 @@ public class ProductServlet extends HttpServlet {
         }
 
         return gsonParser.toJson(modifiedProduct);
-    }
-
-    private Optional<Product> getProductFromReq(HttpServletRequest req) throws NumberFormatException {
-        int quantity = ServletsUtil.getIntegerParameterFromRequest(req, "quantity");
-        double price = ServletsUtil.getDoubleParameterFromRequest(req, "price");
-        boolean discount = ServletsUtil.getBooleanParameterFromRequest(req, "discount");
-        String name = ServletsUtil.getStringParameterFromRequest(req, "name");
-
-        return Optional.ofNullable(Product.builder()
-                .quantity(quantity)
-                .price(price)
-                .isDiscount(discount)
-                .name(name)
-                .build());
     }
 }
