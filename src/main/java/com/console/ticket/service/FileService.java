@@ -20,6 +20,10 @@ public final class FileService {
     private static Path backgroundPdf;
 
     public static void writeReceipt(String receipt) throws FileException {
+        File directory = new File("tickets");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
         File outputFile = new File((String.format("tickets/ticket%s.pdf", Constants.CASHIER_NUMBER)));
         try {
             buildPdfFile(outputFile, receipt);
