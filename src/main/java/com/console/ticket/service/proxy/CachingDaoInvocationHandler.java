@@ -7,7 +7,6 @@ import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.ParseException;
 
-import javax.xml.crypto.Data;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +21,7 @@ import java.util.Optional;
  */
 public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
-    private static final String YML_FILENAME = "application.yml";
+    private static final String YML_FILENAME = "cache.yml";
     private final Cache cacheList;
     private final DaoTemplate<T> cardDao;
 

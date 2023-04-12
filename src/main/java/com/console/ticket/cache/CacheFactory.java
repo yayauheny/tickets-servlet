@@ -30,7 +30,7 @@ public class CacheFactory {
         return new LfuCache(capacity);
     }
 
-    private static void readYmlFile(String resourceName) {
+    private void readYmlFile(String resourceName) {
         Map<String, Object> data;
 
         try (InputStream inputStream = CacheFactory.class.getClassLoader().getResourceAsStream(resourceName)) {

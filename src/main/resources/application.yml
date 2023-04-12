@@ -1,2 +1,5 @@
-capacity: 3
-type: LRU
+liquibase:
+  enabled: true
+datasource:
+  url: jdbc:postgresql://localhost:5432/postgres?currentSchema=company
+
