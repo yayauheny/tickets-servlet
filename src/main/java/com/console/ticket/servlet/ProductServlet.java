@@ -5,7 +5,9 @@ import com.console.ticket.entity.Product;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.InputException;
 import com.console.ticket.service.impl.ProductServiceImpl;
+import com.console.ticket.util.ConnectionManager;
 import com.console.ticket.util.ServletsUtil;
+import com.console.ticket.util.SqlRequestsUtil;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,7 +18,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,10 +51,12 @@ public class ProductServlet extends HttpServlet {
         try (PrintWriter writer = resp.getWriter()) {
             try {
                 if (req.getParameter("id") == null) {
-                    responseOutput = gsonParser.toJson(getAllProducts());
+                    List<Product> productsPerPage = getProductsPerPage(req);
+
                     ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_JSON, HTTP_STATUS_OK);
+                    responseOutput = gsonParser.toJson(productsPerPage);
                 } else {
-                    int productIdFromReq = ServletsUtil.getIntegerParameterFromRequest(req, "id");
+                    int productIdFromReq = ServletsUtil.getIntegerParameterFromReq(req, "id");
                     responseOutput = findProductByIdAndGetResp(resp, productIdFromReq);
                 }
             } catch (NumberFormatException e) {
@@ -68,7 +74,7 @@ public class ProductServlet extends HttpServlet {
 
         try (PrintWriter writer = resp.getWriter()) {
             try {
-                Optional<Product> maybeProductFromRequest = ServletsUtil.getProductFromReq(req);
+                Optional<Product> maybeProductFromRequest = getProductFromReq(req);
 
                 if (maybeProductFromRequest.isPresent()) {
                     responseOutput = saveProductAndGetResp(resp, maybeProductFromRequest.get());
@@ -88,7 +94,7 @@ public class ProductServlet extends HttpServlet {
 
         try (PrintWriter writer = resp.getWriter()) {
             try {
-                Optional<Product> maybeProductFromRequest = ServletsUtil.getProductFromReq(req);
+                Optional<Product> maybeProductFromRequest = getProductFromReq(req);
 
                 if (maybeProductFromRequest.isPresent()) {
                     responseOutput = updateProductAndGetResp(resp, maybeProductFromRequest.get());
@@ -108,7 +114,7 @@ public class ProductServlet extends HttpServlet {
 
         try (PrintWriter writer = resp.getWriter()) {
             try {
-                int id = ServletsUtil.getIntegerParameterFromRequest(req, "id");
+                int id = ServletsUtil.getIntegerParameterFromReq(req, "id");
                 responseOutput = deleteProductByIdAndGetResp(resp, id);
             } catch (NumberFormatException | DatabaseException e) {
                 throw new InputException(responseOutput, e);
@@ -130,7 +136,7 @@ public class ProductServlet extends HttpServlet {
         productService.delete(productId);
         ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_JSON, HTTP_STATUS_OK);
 
-        return "Product %s was deleted successfully".formatted(
+        return "Product with id = %s was deleted successfully".formatted(
                 gsonParser.toJson(productId));
     }
 
@@ -150,12 +156,6 @@ public class ProductServlet extends HttpServlet {
         return productService.findById(product.getId()).isPresent();
     }
 
-    private List<Product> getAllProducts() throws DatabaseException {
-        return productService.findAll().stream()
-                .flatMap(Optional::stream)
-                .toList();
-    }
-
     private String updateProductAndGetResp(HttpServletResponse resp, Product modifiedProduct) throws DatabaseException {
         if (productExists(modifiedProduct)) {
             productService.update(modifiedProduct);
@@ -166,5 +166,72 @@ public class ProductServlet extends HttpServlet {
         }
 
         return gsonParser.toJson(modifiedProduct);
+    }
+
+    private List<Product> getProductsPerPage(HttpServletRequest req) {
+        int pageSize = getPageSize(req);
+        int currentPage = getCurrentPage(req);
+        int productsOffset = currentPage * pageSize;
+
+        return findProductsWithLimit(pageSize, productsOffset);
+    }
+
+    private int getPageSize(HttpServletRequest req) {
+        try {
+            return ServletsUtil.getIntegerParameterFromReq(req, "page-size");
+        } catch (NumberFormatException e) {
+            return HTTP_DEFAULT_PAGE_SIZE;
+        }
+    }
+
+    private int getCurrentPage(HttpServletRequest req) {
+        try {
+            return ServletsUtil.getIntegerParameterFromReq(req, "page");
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private List<Product> findProductsWithLimit(int limit, int offset) {
+        List<Product> products = new ArrayList<>();
+
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_GET_LIMIT);
+        ) {
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2, offset);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Product product = Product.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .quantity(resultSet.getInt("quantity"))
+                        .price(resultSet.getDouble("price"))
+                        .isDiscount(resultSet.getBoolean("discount"))
+                        .build();
+                products.add(product);
+            }
+
+            resultSet.close();
+
+            return products;
+        } catch (SQLException e) {
+            throw new DatabaseException("Error get products from database: " + e.getMessage());
+        }
+    }
+
+    private Optional<Product> getProductFromReq(HttpServletRequest req) throws NumberFormatException {
+        int quantity = ServletsUtil.getIntegerParameterFromReq(req, "quantity");
+        double price = ServletsUtil.getDoubleParameterFromRequest(req, "price");
+        boolean discount = ServletsUtil.getBooleanParameterFromRequest(req, "discount");
+        String name = ServletsUtil.getStringParameterFromRequest(req, "name");
+
+        return Optional.ofNullable(Product.builder()
+                .quantity(quantity)
+                .price(price)
+                .isDiscount(discount)
+                .name(name)
+                .build());
     }
 }

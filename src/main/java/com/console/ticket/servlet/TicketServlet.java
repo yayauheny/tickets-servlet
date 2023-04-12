@@ -1,11 +1,13 @@
 package com.console.ticket.servlet;
 
+import com.console.ticket.constants.Constants;
 import com.console.ticket.data.CardDao;
 import com.console.ticket.data.ProductDao;
 import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Company;
 import com.console.ticket.entity.Currency;
 import com.console.ticket.entity.Product;
+import com.console.ticket.exception.InputException;
 import com.console.ticket.service.FileService;
 import com.console.ticket.service.ReceiptBuilder;
 import com.console.ticket.service.impl.CardServiceImpl;
@@ -21,24 +23,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.console.ticket.util.ServletsUtil.HTTP_CONTENT_TYPE_PDF;
-import static com.console.ticket.util.ServletsUtil.HTTP_STATUS_OK;
+import static com.console.ticket.util.ServletsUtil.*;
+import static com.console.ticket.util.ServletsUtil.HTTP_STATUS_NOT_FOUND;
 
 @WebServlet("/ticket")
 public class TicketServlet extends HttpServlet {
 
     private static final Company companyEvroopt = new Company(
             "Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
-    private static CardServiceImpl cardService = new CardServiceImpl(CardDao.getInstance());
-    private static ProductServiceImpl productService = new ProductServiceImpl(ProductDao.getInstance());
+    private static final CardServiceImpl cardService = new CardServiceImpl(CardDao.getInstance());
+    private static final ProductServiceImpl productService = new ProductServiceImpl(ProductDao.getInstance());
+
+    private static final String DEFAULT_EXCEPTION_MESSAGE = "Exception build ticket: ";
 
     static {
         try {
@@ -47,42 +51,92 @@ public class TicketServlet extends HttpServlet {
             throw new RuntimeException(e.getMessage());
         }
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int cardId = ServletsUtil.getIntegerParameterFromRequest(req, "cardId");
-        List<Product> products = new ArrayList<>();
-        String[] productsIdParams= req.getParameterValues("productId");
-        String[] productsQuantityParams = req.getParameterValues("quantity");
+        ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PLAINTEXT, HTTP_STATUS_NOT_FOUND);
 
-        List<Integer> productIdList = Arrays.stream(productsIdParams)
-                .map(Integer::parseInt)
-                .toList();
-        List<Integer> productQuantityList = Arrays.stream(productsQuantityParams)
-                .map(Integer::parseInt)
-                .toList();
+        try (PrintWriter writer = resp.getWriter()) {
+            try {
+                File ticketPdf;
+                int cardId = ServletsUtil.getIntegerParameterFromReq(req, "cardId");
+                List<Integer> productIdList = getAllIntegerParamsFromReq(req, "productId");
+                List<Integer> productQuantityList = getAllIntegerParamsFromReq(req, "quantity");
 
-        IntStream.range(0, productIdList.size())
-                .forEach(counter -> {
-                    Product product = productService.findById(productIdList.get(counter)).get();
-                    product.setQuantity(productQuantityList.get(counter));
-                    products.add(product);
-                });
+                deleteInvalidProductsFromReq(productIdList, productQuantityList);
+                List<Product> products = getExistingProductsFromReq(productIdList, productQuantityList);
 
-        Optional<Card> card = cardService.findById(cardId);
+                Optional<Card> maybeCard = cardService.findById(cardId);
 
-        if (card.isPresent()) {
-            String s = ReceiptBuilder.writeReceipt(companyEvroopt, card.get(), products);
-            File file = FileService.writeAndGetReceipt(s);
-
-            ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PDF, HTTP_STATUS_OK);
-            try (ServletOutputStream outputStream = resp.getOutputStream();
-                 FileInputStream inputStream = new FileInputStream(file)) {
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+                if (maybeCard.isEmpty()) {
+                    Card card = Card.builder()
+                            .id(Constants.INCREMENTED_CASHIER_NUMBER)
+                            .discountSize(0D)
+                            .build();
+                    String receipt = ReceiptBuilder.writeReceipt(companyEvroopt, card, products);
+                    ticketPdf = FileService.writeAndGetReceipt(receipt);
+                } else {
+                    String ticket = ReceiptBuilder.writeReceipt(companyEvroopt, maybeCard.get(), products);
+                    ticketPdf = FileService.writeAndGetReceipt(ticket);
                 }
+                writePdfFileToResponse(resp, ticketPdf);
+            } catch (IOException e) {
+                writer.write(DEFAULT_EXCEPTION_MESSAGE);
+                throw new InputException(DEFAULT_EXCEPTION_MESSAGE, e);
             }
         }
+    }
+
+    private void writePdfFileToResponse(HttpServletResponse resp, File ticketPdf) throws IOException {
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PDF, HTTP_STATUS_OK);
+
+        try (ServletOutputStream outputStream = resp.getOutputStream();
+             FileInputStream inputStream = new FileInputStream(ticketPdf)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            resp.setContentLength(buffer.length);
+        }
+    }
+
+    private List<Product> getExistingProductsFromReq(List<Integer> idList, List<Integer> quantityList) {
+        List<Product> products = new ArrayList<>();
+
+        IntStream.range(0, idList.size())
+                .forEach(index -> {
+                    int productId = idList.get(index);
+                    int quantity = quantityList.get(index);
+                    Optional<Product> maybeExistingProduct = productService.findById(productId);
+
+                    if (maybeExistingProduct.isPresent()) {
+                        Product existingProduct = maybeExistingProduct.get();
+                        existingProduct.setQuantity(quantity);
+
+                        products.add(existingProduct);
+                    }
+                });
+
+        return products;
+    }
+
+    private void deleteInvalidProductsFromReq(List<Integer> idList, List<Integer> quantityList) {
+        int productsWithQuantity = Math.min(idList.size(), quantityList.size());
+
+        IntStream.range(productsWithQuantity, idList.size())
+                .forEach(idList::remove);
+
+        IntStream.range(productsWithQuantity, quantityList.size())
+                .forEach(quantityList::remove);
+    }
+
+    private List<Integer> getAllIntegerParamsFromReq(HttpServletRequest req, String parameter) {
+        return Arrays.stream(req.getParameterValues(parameter))
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 }

@@ -49,13 +49,10 @@ public final class FileService {
 
 
     private static File buildPdfFile(File file, String text) {
-//        InputStream resourceStream = FileService.class.getClassLoader().getResourceAsStream("Clevertec_Template.pdf");
-//        backgroundPdf = Path.of(FileService.class.getClassLoader().getResource("Clevertec_Template.pdf").getPath());
+        try (InputStream resourceStream = FileService.class.getClassLoader().getResourceAsStream("Clevertec_Template.pdf");){
+            Paragraph paragraph;
+            Document document = new Document();
 
-        InputStream resourceStream = FileService.class.getClassLoader().getResourceAsStream("Clevertec_Template.pdf");
-        Paragraph paragraph;
-        Document document = new Document();
-        try {
             PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(file.toPath()));
             PdfReader reader = new PdfReader(resourceStream);
 
@@ -79,43 +76,8 @@ public final class FileService {
 
         } catch (IOException | DocumentException e) {
             throw new FileException("Exception parse file to pdf: ", e);
-        } finally {
-            try {
-                resourceStream.close();
-            } catch (IOException e) {
-                throw new FileException("Exception while closing resource stream: ", e);
-            }
         }
 
         return file;
     }
-
-//        Paragraph paragraph;
-//        Document document = new Document();
-//        try {
-//            PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(file.toPath()));
-//            PdfReader reader = new PdfReader(backgroundPdf.toString());
-//
-//            document.open();
-//            PdfImportedPage backgroundPage = writer.getImportedPage(reader, 1);
-//            PdfContentByte contentByte = writer.getDirectContent();
-//            contentByte.addTemplate(backgroundPage, 0, 0);
-//
-//            Font font = new Font(Font.FontFamily.HELVETICA, 18);
-//            paragraph = new Paragraph();
-//            paragraph.setFont(font);
-//            paragraph.setLeading(24);
-//            paragraph.setAlignment(Element.ALIGN_CENTER);
-//            paragraph.add("\n".repeat(10));
-//            paragraph.add(text);
-//            document.add(paragraph);
-//
-//            document.close();
-//            writer.close();
-//        } catch (IOException | DocumentException e) {
-//            throw new FileException("Exception parse file to pdf: ", e);
-//        }
-//
-//        return file;
-//    }
 }

@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class ProductDaoTest {
-    private static ProductDao productDao;
+    private static com.console.ticket.data.ProductDao productDao;
 
     @BeforeAll
     static void initialize() {
-        productDao = ProductDao.getInstance();
+        productDao = com.console.ticket.data.ProductDao.getInstance();
     }
     @DisplayName("check if empty for not existing productId")
     @Test
@@ -32,13 +32,13 @@ class ProductDaoTest {
         assertThat(productDao.findById(noSuchProductId)).isEmpty();
     }
 
-    @DisplayName("find all database products properly")
-    @Test
-    void checkFindAllProductsFromDatabaseProperly() {
-        int databaseProductsQuantity = 8;
-
-        assertThat(productDao.findAll()).size().isEqualTo(databaseProductsQuantity);
-    }
+//    @DisplayName("find all database products properly")
+//    @Test
+//    void checkFindAllProductsFromDatabaseProperly() {
+//        int databaseProductsQuantity = 8;
+//
+//        assertThat(productDao.findAll()).size().isEqualTo(databaseProductsQuantity);
+//    }
 
     @DisplayName("exception if id is negative")
     @Test

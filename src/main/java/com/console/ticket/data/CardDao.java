@@ -37,9 +37,9 @@ public class CardDao implements DaoTemplate<Card> {
         }
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_FIND)) {
-
             preparedStatement.setObject(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+
             Card card = null;
 
             if (resultSet.next()) {
@@ -58,7 +58,7 @@ public class CardDao implements DaoTemplate<Card> {
             throw new InputException("Incorrect id format: " + id);
         }
 
-        boolean isDeleted = false;
+        boolean isDeleted;
 
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_DELETE)) {

@@ -5,13 +5,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SqlRequestsUtil {
     public static final String PRODUCT_FIND = """
-            SELECT * FROM company.product WHERE id = ?
+            SELECT * FROM company.product WHERE id = ?;
             """;
     public static final String PRODUCT_FIND_ALL = """
-            SELECT * FROM company.product
+            SELECT * FROM company.product;
             """;
     public static final String PRODUCT_DELETE = """
-            DELETE FROM company.product WHERE id = ?
+            DELETE FROM company.product WHERE id = ?;
             """;
     public static final String PRODUCT_SAVE = """
             INSERT INTO company.product (name, quantity, price, discount) VALUES (?, ?, ?, ?);
@@ -22,17 +22,20 @@ public class SqlRequestsUtil {
                 quantity = ?,
                 price = ?,
                 discount = ?
-            WHERE id = ?
+            WHERE id = ?;
+            """;
+    public static final String PRODUCT_GET_LIMIT = """
+            SELECT * FROM company.product LIMIT ? OFFSET ?;
             """;
     public static final String CARD_FIND = """
-            SELECT * FROM company.discount_card WHERE id = ?
+            SELECT * FROM company.discount_card WHERE id = ?;
             """;
     public static final String CARD_FIND_ALL = """
-            SELECT * FROM company.discount_card
+            SELECT * FROM company.discount_card;
             """;
     public static final String CARD_DELETE = """
             DELETE FROM company.discount_card
-            WHERE id = ?
+            WHERE id = ?;
             """;
     public static final String CARD_SAVE = """
             INSERT INTO company.discount_card (discount)
@@ -41,6 +44,10 @@ public class SqlRequestsUtil {
     public static final String CARD_UPDATE = """
             UPDATE company.discount_card
             SET discount = ?
-            WHERE id = ?
+            WHERE id = ?;
+            """;
+
+    public static final String CARD_GET_LIMIT = """
+            SELECT * FROM company.discount_card LIMIT ? OFFSET ?;
             """;
 }
