@@ -30,6 +30,8 @@ dependencies {
 
     liquibaseRuntime 'org.liquibase:liquibase-core:4.8.0'
     liquibaseRuntime 'org.postgresql:postgresql:42.5.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
 }
 
 test {
@@ -40,8 +42,8 @@ task('deploy') {
     liquibase {
         activities {
             main {
-                changeLogFile "src/main/resources/db.changelog/db.changelog-master.yaml"
-                url "jdbc:postgresql://localhost:5432/postgres?currentSchema=company"
+                changeLogFile "src/main/resources/db.changelog/db.changelog-master.xml"
+                url "jdbc:postgresql://localhost:5432/postgres"
                 username "postgres"
                 password "root"
             }
@@ -49,3 +51,7 @@ task('deploy') {
     }
 }
 compileJava.dependsOn(update).dependsOn(deploy)
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}

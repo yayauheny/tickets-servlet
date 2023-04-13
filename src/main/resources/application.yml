@@ -1,5 +1,5 @@
 liquibase:
   enabled: true
+  changeLogFile: classpath:db.changelog/db.changelog-master.xml
 datasource:
-  url: jdbc:postgresql://localhost:5432/postgres?currentSchema=company
-
+  url: jdbc:postgresql://localhost:5432/postgres
