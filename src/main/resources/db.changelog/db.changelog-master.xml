@@ -3,11 +3,10 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <include file="changeset/grant-privileges.sql" relativeToChangelogFile="true"/>
-    <include file="changeset/create-schema.sql" relativeToChangelogFile="true"/>
-    <include file="changeset/create-product-table.sql" relativeToChangelogFile="true"/>
-    <include file="changeset/create-discount-card-table.sql" relativeToChangelogFile="true"/>
-    <include file="changeset/insert-product-data.sql" relativeToChangelogFile="true"/>
-    <include file="changeset/insert-discount-card-data.sql" relativeToChangelogFile="true"/>
+    <include file="changeset/create-schema.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/create-product-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/create-discount-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/insert-product-data.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/insert-discount-card-data.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
