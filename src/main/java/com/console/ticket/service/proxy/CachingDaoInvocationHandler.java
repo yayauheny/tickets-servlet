@@ -4,10 +4,12 @@ import com.console.ticket.annotation.Cached;
 import com.console.ticket.cache.Cache;
 import com.console.ticket.cache.CacheFactory;
 import com.console.ticket.data.DaoTemplate;
+import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.ParseException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ import java.util.Optional;
  */
 public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
-    private static final String YML_FILENAME = "application.yml";
+    private static final String YML_FILENAME = "cache.yml";
     private final Cache cacheList;
     private final DaoTemplate<T> cardDao;
 
@@ -41,11 +43,11 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
      * @param method The original method.
      * @param args   The original method's arguments.
      * @return The original object with modified method.
-     * @throws Throwable if an error occurs while invoking the method.
+     * @throws DatabaseException if an error occurs while invoking the method.
      */
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws DatabaseException, InvocationTargetException, IllegalAccessException {
         if (method.isAnnotationPresent(Cached.class) && args.length > 0) {
             String methodName = method.getName();
 

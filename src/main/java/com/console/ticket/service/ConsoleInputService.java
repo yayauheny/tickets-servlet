@@ -90,7 +90,7 @@ public class ConsoleInputService {
         }
 
         return cardService.findById(cardNumber)
-                .orElse(Card.builder().id(Constants.CASHIER_NUMBER).discountSize(0D).build());
+                .orElse(Card.builder().discountSize(0D).build());
     }
 
     private static List<Product> findProducts(Map<String, String> stringMap) throws InputException {
@@ -114,7 +114,7 @@ public class ConsoleInputService {
         return productList;
     }
 
-    private static void createSqlTables() throws DatabaseException {
+    public static void createSqlTables() throws DatabaseException {
         try (var connection = ConnectionManager.open();
              var statement = connection.createStatement()) {
             statement.execute(Constants.CREATE_TABLES);

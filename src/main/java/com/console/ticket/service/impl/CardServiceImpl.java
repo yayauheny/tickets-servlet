@@ -3,6 +3,7 @@ package com.console.ticket.service.impl;
 import com.console.ticket.data.CardDao;
 import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.entity.Card;
+import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.service.proxy.CachingDaoInvocationHandler;
 
 import java.lang.reflect.Proxy;
@@ -24,27 +25,27 @@ public class CardServiceImpl implements DaoService<Card> {
     }
 
     @Override
-    public Optional<Card> findById(Integer id) {
+    public Optional<Card> findById(Integer id) throws DatabaseException {
         return proxyInstance.findById(id);
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws DatabaseException {
         proxyInstance.delete(id);
     }
 
     @Override
-    public Optional<Card> save(Card card) {
+    public Optional<Card> save(Card card) throws DatabaseException {
         return proxyInstance.save(card);
     }
 
     @Override
-    public void update(Card card) {
+    public void update(Card card) throws DatabaseException {
         proxyInstance.update(card);
     }
 
     @Override
-    public List<Optional<Card>> findAll() {
+    public List<Optional<Card>> findAll() throws DatabaseException {
         return proxyInstance.findAll();
     }
 }

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,18 +19,23 @@ import java.nio.file.Path;
 public final class FileService {
     private static String ticketInputLog;
     private static Path backgroundPdf;
+    public static File currentReceipt;
 
-    public static void writeReceipt(String receipt) throws FileException {
+    public static File writeAndGetReceipt(String receipt) throws FileException {
         File directory = new File("tickets");
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        File outputFile = new File((String.format("tickets/ticket%s.pdf", Constants.CASHIER_NUMBER)));
+
+        currentReceipt = new File((String.format("tickets/ticket%s.pdf", Constants.INCREMENTED_CASHIER_NUMBER)));
+
         try {
-            buildPdfFile(outputFile, receipt);
+            buildPdfFile(currentReceipt, receipt);
         } catch (FileException e) {
             throw new FileException("Exception while writing to file: ", e);
         }
+
+        return currentReceipt;
     }
 
     public static void readReceipt(String inputPath) throws FileException {
@@ -43,12 +49,12 @@ public final class FileService {
 
 
     private static File buildPdfFile(File file, String text) {
-        backgroundPdf = Path.of("src/main/resources/Clevertec_Template.pdf");
-        Paragraph paragraph;
-        Document document = new Document();
-        try {
+        try (InputStream resourceStream = FileService.class.getClassLoader().getResourceAsStream("Clevertec_Template.pdf");){
+            Paragraph paragraph;
+            Document document = new Document();
+
             PdfWriter writer = PdfWriter.getInstance(document, Files.newOutputStream(file.toPath()));
-            PdfReader reader = new PdfReader(backgroundPdf.toString());
+            PdfReader reader = new PdfReader(resourceStream);
 
             document.open();
             PdfImportedPage backgroundPage = writer.getImportedPage(reader, 1);
@@ -66,10 +72,12 @@ public final class FileService {
 
             document.close();
             writer.close();
+
+
         } catch (IOException | DocumentException e) {
             throw new FileException("Exception parse file to pdf: ", e);
         }
 
-        return null;
+        return file;
     }
 }

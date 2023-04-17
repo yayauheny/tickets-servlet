@@ -1,8 +1,29 @@
-.idea/
+# Gradle files
 .gradle/
 build/
-# Ignore Gradle project-specific cache directory
-.gradle
 
-# Ignore Gradle build output directory
-build
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Compiled class files
+*.class
+
+# JAR files
+*.jar
+
+# WAR files
+*.war
+
+# Logs and backup files
+*.log
+*.log.*
+*.bak
+
+# Dependency files
+lib/
+
+# Out directory
+out/

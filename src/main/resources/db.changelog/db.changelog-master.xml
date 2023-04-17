@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="db.changelog-master.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="changeset/create-schema.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/create-product-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/create-discount-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/insert-product-data.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/insert-discount-card-data.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

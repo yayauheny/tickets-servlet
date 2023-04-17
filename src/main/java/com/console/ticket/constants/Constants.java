@@ -1,25 +1,20 @@
 package com.console.ticket.constants;
 
-import com.console.ticket.entity.Currency;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 public final class Constants {
-    public static String CURRENCY = Currency.USA.getCurrency();
-    public static int CASHIER_NUMBER = 0;
+    public static int INCREMENTED_CASHIER_NUMBER = 0;
     public static final int DISCOUNT_AFTER = 5;
-    public static double PRODUCT_DISCOUNT = 10;
+    public static final double PRODUCT_DISCOUNT = 10;
     public static final String OUTPUT_LINE = "_______________________________________\n";
-    public static String RECEIPT_MESSAGE = "Для вывода чека введите номер и количество товара, а также номер дисконтной карты";
-    public static String READ_MESSAGE = "Для чтения чека введите путь к файлу";
-    public static String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
-    public static String NUMBER_SYMBOL = "\u2116";
-    public static String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
-    public static Pattern isDigit = Pattern.compile("\\d+");
+    public static final String RECEIPT_MESSAGE = "Для вывода чека введите номер и количество товара, а также номер дисконтной карты";
+    public static final String READ_MESSAGE = "Для чтения чека введите путь к файлу";
+    public static final String EXIT_MESSAGE = "Для выхода из программы введите 'exit'";
+    public static final String MENU_MESSAGE = String.format("%nRECEIPT BUILDER: %n%s%n%s%n%s%n: ", RECEIPT_MESSAGE, READ_MESSAGE, EXIT_MESSAGE);
+    public static final String NUMBER_SYMBOL = "\u2116";
+    public static final Pattern isDigit = Pattern.compile("\\d+");
 
-    public static String CREATE_TABLES = """
+    public static final String CREATE_TABLES = """
             CREATE SCHEMA IF NOT EXISTS company;
             CREATE TABLE IF NOT EXISTS company.product
             (

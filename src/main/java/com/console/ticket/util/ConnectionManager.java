@@ -1,6 +1,5 @@
 package com.console.ticket.util;
 
-import com.console.ticket.exception.DatabaseException;
 import lombok.experimental.UtilityClass;
 
 import java.sql.Connection;
@@ -19,7 +18,7 @@ public class ConnectionManager {
                     PropertiesUtil.get(USERNAME_KEY),
                     PropertiesUtil.get(PASSWORD_KEY));
         } catch (SQLException e) {
-            throw new RuntimeException(new DatabaseException("Open connection error"));
+            throw new RuntimeException(e.getMessage());
         }
     }
 

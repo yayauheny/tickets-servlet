@@ -24,7 +24,7 @@ public final class ReceiptBuilder {
         RECEIPT = headerInfo.concat(productInfo).concat(totalInfo);
 
         try {
-            FileService.writeReceipt(RECEIPT);
+            FileService.writeAndGetReceipt(RECEIPT);
         } catch (FileException e) {
             System.out.println("Exception write receipt to file: " + e.getMessage());
         }
@@ -37,13 +37,13 @@ public final class ReceiptBuilder {
     }
 
     private static String buildHeaderInfo(Company company) {
-        Constants.CASHIER_NUMBER++;
+        Constants.INCREMENTED_CASHIER_NUMBER++;
 
         return new StringBuilder()
                 .append(String.format("%s%25s%n%s", Constants.OUTPUT_LINE, "CASH RECEIPT", Constants.OUTPUT_LINE))
                 .append(String.format("%26s%n", company.getName()))
                 .append(String.format("%s%n%n", company.getAddress()))
-                .append(String.format("CASHIER %s:%d", Constants.NUMBER_SYMBOL, Constants.CASHIER_NUMBER))
+                .append(String.format("CASHIER %s:%d", Constants.NUMBER_SYMBOL, Constants.INCREMENTED_CASHIER_NUMBER))
                 .append(String.format(("%18s%-17s%n"), "Date: ", DateTimeService.getCurrentDate()))
                 .append(String.format(("%29s%-17s%n%s"), "Time: ", DateTimeService.getCurrentTime(), Constants.OUTPUT_LINE))
                 .append("QTY:  ")

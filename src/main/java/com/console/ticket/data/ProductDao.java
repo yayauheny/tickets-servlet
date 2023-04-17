@@ -48,14 +48,22 @@ public class ProductDao implements DaoTemplate<Product> {
     @Override
     public void delete(Integer id) throws DatabaseException {
         if (id == null || id < 0) {
-            throw new InputException("Error find product by id: " + id);
+            throw new InputException("Incorrect id format: " + id);
         }
+
+        boolean isDeleted = false;
+
         try (var connection = ConnectionManager.open();
              var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_DELETE)) {
             preparedStatement.setObject(1, id);
-            preparedStatement.executeUpdate();
+
+            isDeleted = (preparedStatement.executeUpdate() > 0);
         } catch (SQLException e) {
             throw new DatabaseException("Error delete product by id: " + id, e);
+        }
+
+        if (!isDeleted) {
+            throw new DatabaseException("No product found by id: " + id);
         }
     }
 
@@ -70,11 +78,12 @@ public class ProductDao implements DaoTemplate<Product> {
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
+
             if (keys.next()) {
                 product.setId(keys.getInt("id"));
             }
 
-            return Optional.ofNullable(product);
+            return Optional.of(product);
         } catch (SQLException e) {
             throw new DatabaseException("Error save product: " + product.getName(), e);
         }
