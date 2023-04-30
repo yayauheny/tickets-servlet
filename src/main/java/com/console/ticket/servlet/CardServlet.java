@@ -34,7 +34,6 @@ public class CardServlet extends HttpServlet {
     private static final Gson gsonParser = new Gson();
     private static final String DEFAULT_EXCEPTION_MESSAGE = "Exception read data from client: ";
 
-
     static {
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());

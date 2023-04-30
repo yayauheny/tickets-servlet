@@ -21,14 +21,7 @@ import java.util.Optional;
 @Setter
 @Getter
 public class CardDao implements DaoTemplate<Card> {
-    private static CardDao INSTANCE;
-
-    public static CardDao getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new CardDao();
-        }
-        return INSTANCE;
-    }
+    private static CardDao INSTANCE = new CardDao();
 
     @Override
     public Optional<Card> findById(Integer id) throws DatabaseException, InputException {
@@ -135,5 +128,9 @@ public class CardDao implements DaoTemplate<Card> {
         } catch (SQLException e) {
             throw new DatabaseException("Error get all cards from database: " + e.getMessage());
         }
+    }
+
+    public static CardDao getInstance() {
+        return INSTANCE;
     }
 }

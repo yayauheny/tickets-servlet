@@ -1,8 +1,8 @@
 package com.console.ticket.service.proxy;
 
 import com.console.ticket.annotation.Cached;
-import com.console.ticket.cache.Cache;
-import com.console.ticket.cache.CacheFactory;
+import com.console.ticket.service.cache.Cache;
+import com.console.ticket.service.cache.CacheFactory;
 import com.console.ticket.data.DaoTemplate;
 import com.console.ticket.exception.DatabaseException;
 import com.console.ticket.exception.ParseException;
@@ -23,11 +23,11 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
     private static final String YML_FILENAME = "cache.yml";
     private final Cache cacheList;
-    private final DaoTemplate<T> cardDao;
+    private final DaoTemplate<T> daoTemplate;
 
-    public CachingDaoInvocationHandler(DaoTemplate<T> cardDao) {
+    public CachingDaoInvocationHandler(DaoTemplate<T> daoTemplate) {
         this.cacheList = new CacheFactory().getCacheFromYml(YML_FILENAME);
-        this.cardDao = cardDao;
+        this.daoTemplate = daoTemplate;
     }
 
     /**
@@ -63,7 +63,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
                         foundedObject = cacheList.get(id);
 
                         if (foundedObject == null) {
-                            foundedObject = method.invoke(cardDao, args);
+                            foundedObject = method.invoke(daoTemplate, args);
                         }
                         cacheList.put(id, foundedObject);
                         
@@ -87,7 +87,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
                     if (objectArgument != null) {
                         id = getObjectFieldId(objectArgument);
-                        objectArgument = method.invoke(cardDao, args);
+                        objectArgument = method.invoke(daoTemplate, args);
                         cacheList.put(id, objectArgument);
                         
                         return objectArgument;
@@ -106,7 +106,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
             }
         }
 
-        return method.invoke(cardDao, args);
+        return method.invoke(daoTemplate, args);
     }
 
     private Integer getObjectFieldId(Object argument) {

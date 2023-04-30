@@ -21,7 +21,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public class ProductDao implements DaoTemplate<Product> {
-    private static ProductDao INSTANCE;
+    private static final ProductDao INSTANCE = new ProductDao();
 
     @Override
     public Optional<Product> findById(Integer id) throws DatabaseException {
@@ -141,9 +141,6 @@ public class ProductDao implements DaoTemplate<Product> {
     }
 
     public static ProductDao getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ProductDao();
-        }
         return INSTANCE;
     }
 }

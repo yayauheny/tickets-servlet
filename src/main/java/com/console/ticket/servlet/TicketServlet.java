@@ -56,7 +56,7 @@ public class TicketServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PLAINTEXT, HTTP_STATUS_NOT_FOUND);
 
-        try (PrintWriter writer = resp.getWriter()) {
+        try (ServletOutputStream outputStream = resp.getOutputStream()) {
             try {
                 File ticketPdf;
                 int cardId = ServletsUtil.getIntegerParameterFromReq(req, "cardId");
@@ -79,20 +79,20 @@ public class TicketServlet extends HttpServlet {
                     String ticket = ReceiptBuilder.writeReceipt(companyEvroopt, maybeCard.get(), products);
                     ticketPdf = FileService.writeAndGetReceipt(ticket);
                 }
-                writePdfFileToResponse(resp, ticketPdf);
+
+                writePdfFileToResponse(resp, outputStream, ticketPdf);
             } catch (IOException e) {
-                writer.write(DEFAULT_EXCEPTION_MESSAGE);
+                outputStream.write(DEFAULT_EXCEPTION_MESSAGE.getBytes(StandardCharsets.UTF_8));
                 throw new InputException(DEFAULT_EXCEPTION_MESSAGE, e);
             }
         }
     }
 
-    private void writePdfFileToResponse(HttpServletResponse resp, File ticketPdf) throws IOException {
+    private void writePdfFileToResponse(HttpServletResponse resp,ServletOutputStream outputStream, File ticketPdf) throws IOException {
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PDF, HTTP_STATUS_OK);
 
-        try (ServletOutputStream outputStream = resp.getOutputStream();
-             FileInputStream inputStream = new FileInputStream(ticketPdf)) {
+        try (FileInputStream inputStream = new FileInputStream(ticketPdf)) {
             byte[] buffer = new byte[1024];
             int bytesRead;
 

@@ -50,4 +50,10 @@ public class SqlRequestsUtil {
     public static final String CARD_GET_LIMIT = """
             SELECT * FROM company.discount_card LIMIT ? OFFSET ?;
             """;
+
+    public static final String USER_SAVE = """
+                      INSERT INTO company.users (name, email, password, role, discount_card) 
+                      VALUES (?, ?, ?, ?, ?)
+                      
+            """;
 }

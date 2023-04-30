@@ -5,7 +5,6 @@
 
 <changeSet author="yayauheny" id="1">
 <sql>
-
 CREATE SCHEMA IF NOT EXISTS company;
 </sql>
 </changeSet>

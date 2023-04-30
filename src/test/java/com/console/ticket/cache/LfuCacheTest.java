@@ -1,14 +1,15 @@
 package com.console.ticket.cache;
 
 import com.console.ticket.entity.Product;
+import com.console.ticket.service.cache.Cache;
+import com.console.ticket.service.cache.CacheFactory;
+import com.console.ticket.service.cache.CacheType;
 import com.console.ticket.util.ProductTestBuilder;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class LfuCacheTest {
     static CacheFactory instance;

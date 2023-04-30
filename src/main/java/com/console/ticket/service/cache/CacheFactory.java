@@ -1,4 +1,4 @@
-package com.console.ticket.cache;
+package com.console.ticket.service.cache;
 
 import com.console.ticket.exception.FileException;
 import org.yaml.snakeyaml.Yaml;

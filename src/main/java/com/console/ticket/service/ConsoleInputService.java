@@ -37,7 +37,7 @@ public class ConsoleInputService {
 
     public void readConsole(Company company) {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in))) {
-            createSqlTables();
+//            createSqlTables();
             System.out.print(Constants.MENU_MESSAGE);
             String consoleInput;
             while (true) {
@@ -114,12 +114,12 @@ public class ConsoleInputService {
         return productList;
     }
 
-    public static void createSqlTables() throws DatabaseException {
-        try (var connection = ConnectionManager.open();
-             var statement = connection.createStatement()) {
-            statement.execute(Constants.CREATE_TABLES);
-        } catch (SQLException e) {
-            throw new DatabaseException("Exception create table: ", e);
-        }
-    }
+//    public static void createSqlTables() throws DatabaseException {
+//        try (var connection = ConnectionManager.open();
+//             var statement = connection.createStatement()) {
+//            statement.execute(Constants.CREATE_TABLES);
+//        } catch (SQLException e) {
+//            throw new DatabaseException("Exception create table: ", e);
+//        }
+//    }
 }

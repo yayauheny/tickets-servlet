@@ -1,4 +1,4 @@
-package com.console.ticket.cache;
+package com.console.ticket.service.cache;
 
 public interface Cache {
     public abstract <T> T get(int key);
