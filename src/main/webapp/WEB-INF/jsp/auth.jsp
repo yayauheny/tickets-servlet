@@ -17,7 +17,7 @@
 <div class="auth_block">
     <p>Для дальнейшей работы Вам необходимо зарегистрироваться или войти в аккаунт</p>
 
-    <div class="auth_button">
+    <div class="buttons">
         <div><a href="${pageContext.request.contextPath}/registration">
             <button>Регистрация</button>
         </a></div>

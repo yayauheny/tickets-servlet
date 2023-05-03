@@ -57,7 +57,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
                     Object idArgument = args[0];
                     Integer id;
                     Object foundedObject;
-                    
+
                     if (idArgument != null) {
                         id = castToInteger(idArgument);
                         foundedObject = cacheList.get(id);
@@ -66,7 +66,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
                             foundedObject = method.invoke(daoTemplate, args);
                         }
                         cacheList.put(id, foundedObject);
-                        
+
                         return foundedObject;
                     }
                 }
@@ -86,10 +86,10 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
                     Integer id;
 
                     if (objectArgument != null) {
-                        id = getObjectFieldId(objectArgument);
                         objectArgument = method.invoke(daoTemplate, args);
+                        id = getObjectFieldId(((Optional<?>) objectArgument).get());
                         cacheList.put(id, objectArgument);
-                        
+
                         return objectArgument;
                     }
                 }
@@ -111,7 +111,7 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
     private Integer getObjectFieldId(Object argument) {
         Integer id;
-        
+
         try {
             Field idField = argument.getClass().getDeclaredField("id");
             idField.setAccessible(true);
@@ -127,13 +127,13 @@ public class CachingDaoInvocationHandler<T> implements InvocationHandler {
 
     private Integer castToInteger(Object obj) {
         Integer id;
-        
+
         try {
             id = (Integer) obj;
         } catch (ClassCastException e) {
             throw new ParseException("Exception parse id: ", e);
         }
-        
+
         return id;
     }
 }

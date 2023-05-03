@@ -42,11 +42,11 @@ public class RegistrationServlet extends HttpServlet {
 
             switch (userRole) {
                 case ADMIN: {
-                    req.getRequestDispatcher(JspHelper.getPath("adminActions")).forward(req, resp);
+                    req.getRequestDispatcher(JspHelper.getPath("admin-actions")).forward(req, resp);
                     break;
                 }
                 case USER: {
-                    req.getRequestDispatcher(JspHelper.getPath("userActions")).forward(req, resp);
+                    req.getRequestDispatcher(JspHelper.getPath("user-actions")).forward(req, resp);
                     break;
                 }
             }

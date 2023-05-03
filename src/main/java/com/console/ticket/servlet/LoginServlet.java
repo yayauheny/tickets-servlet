@@ -57,11 +57,11 @@ public class LoginServlet extends HttpServlet {
     private void forwardToUserOrAdminPage(User user, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         switch (user.getRole()) {
             case ADMIN: {
-                req.getRequestDispatcher(JspHelper.getPath("adminActions")).forward(req, resp);
+                req.getRequestDispatcher(JspHelper.getPath("admin-actions")).forward(req, resp);
                 break;
             }
             case USER: {
-                req.getRequestDispatcher(JspHelper.getPath("userActions")).forward(req, resp);
+                req.getRequestDispatcher(JspHelper.getPath("user-actions")).forward(req, resp);
                 break;
             }
         }

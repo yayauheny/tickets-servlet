@@ -1,0 +1,52 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.task-heading {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.table th {
+    text-align: left;
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+.table td {
+    text-align: left;
+    white-space: nowrap;
+    max-width: 200px;
+}
+
+.btn-del {
+    background-color: lightskyblue;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.btn-del:hover {
+    background-color: #64a9af;
+}
