@@ -31,6 +31,11 @@ public class UserServiceImpl implements DaoService<User> {
         return proxyInstance.findById(id);
     }
 
+    public Optional<User> findByEmail(String email) throws DatabaseException {
+        return userDao.findByEmail(email);
+    }
+
+
     @Override
     public void delete(Integer id) throws DatabaseException {
         proxyInstance.delete(id);

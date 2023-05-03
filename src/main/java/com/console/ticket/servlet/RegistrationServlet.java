@@ -26,7 +26,6 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         req.getRequestDispatcher(JspHelper.getPath("registration")).forward(req, resp);
     }
 
@@ -35,7 +34,7 @@ public class RegistrationServlet extends HttpServlet {
         Optional<User> maybeUserFromReq = getUserFromReqAndSave(req);
 
         if (maybeUserFromReq.isEmpty()) {
-            req.setAttribute("is_valid", Boolean.FALSE);
+            req.setAttribute("isValid", Boolean.FALSE);
             req.getRequestDispatcher(JspHelper.getPath("registration")).forward(req, resp);
         } else {
             User currentUser = maybeUserFromReq.get();
@@ -48,6 +47,7 @@ public class RegistrationServlet extends HttpServlet {
                 }
                 case USER: {
                     req.getRequestDispatcher(JspHelper.getPath("userActions")).forward(req, resp);
+                    break;
                 }
             }
         }

@@ -15,7 +15,7 @@
 <div class="registration_block">
     <p>Заполните форму регистрации</p>
 
-    <c:if test="${not empty is_valid and !is_valid}">
+    <c:if test="${not empty isValid and !isValid}">
         <p style="color: red;">Ошибка при регистрации. Пожалуйста, заполните форму еще раз.</p>
     </c:if>
 
@@ -43,7 +43,7 @@
             <input type="text" name="discount_card">
         </label><br>
         
-        <button type="submit">Подтвердить</button>
+        <button type="submit">Зарегистрироваться</button>
     </form>
 </div>
 </body>

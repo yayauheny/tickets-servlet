@@ -66,8 +66,11 @@ public class SqlRequestsUtil {
                       WHERE id = ?;
             """;
 
-    public static final String USER_FIND = """
+    public static final String USER_FIND_BY_ID = """
             SELECT * FROM company.users WHERE id = ?;
+            """;
+    public static final String USER_FIND_BY_EMAIL = """
+            SELECT * FROM company.users WHERE email = ?;
             """;
 
     public static final String USER_DELETE = """

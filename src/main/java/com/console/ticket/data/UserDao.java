@@ -1,6 +1,5 @@
 package com.console.ticket.data;
 
-import com.console.ticket.entity.Card;
 import com.console.ticket.entity.Role;
 import com.console.ticket.entity.User;
 import com.console.ticket.exception.DatabaseException;
@@ -26,7 +25,7 @@ public class UserDao implements DaoTemplate<User> {
         }
 
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.USER_FIND)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.USER_FIND_BY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -39,6 +38,28 @@ public class UserDao implements DaoTemplate<User> {
             return Optional.ofNullable(user);
         } catch (SQLException e) {
             throw new DatabaseException("Error find user by id: " + id, e);
+        }
+    }
+
+    public Optional<User> findByEmail(String email) throws DatabaseException {
+        if (email == null || email.isEmpty()) {
+            throw new InputException("Incorrect email: " + email);
+        }
+
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.USER_FIND_BY_EMAIL)) {
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            User user = null;
+
+            if (resultSet.next()) {
+                user = buildUser(resultSet);
+            }
+
+            return Optional.ofNullable(user);
+        } catch (SQLException e) {
+            throw new DatabaseException("Error find user by email: " + email, e);
         }
     }
 
