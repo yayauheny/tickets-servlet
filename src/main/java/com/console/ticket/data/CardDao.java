@@ -118,10 +118,7 @@ public class CardDao implements DaoTemplate<Card> {
             List<Optional<Card>> cardsList = new ArrayList<>();
 
             while (resultSet.next()) {
-                Optional<Card> card = Optional.ofNullable(Card.builder()
-                        .id(resultSet.getInt("id"))
-                        .discountSize(resultSet.getDouble("discount"))
-                        .build());
+                Optional<Card> card = Optional.ofNullable(buildCard(resultSet));
                 cardsList.add(card);
             }
             return cardsList;

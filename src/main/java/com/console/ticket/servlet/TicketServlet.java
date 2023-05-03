@@ -44,13 +44,13 @@ public class TicketServlet extends HttpServlet {
 
     private static final String DEFAULT_EXCEPTION_MESSAGE = "Exception build ticket: ";
 
-    static {
-        try {
-            DriverManager.registerDriver(new org.postgresql.Driver());
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    static {
+//        try {
+//            DriverManager.registerDriver(new org.postgresql.Driver());
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

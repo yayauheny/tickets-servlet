@@ -106,6 +106,23 @@ public class ProductDao implements DaoTemplate<Product> {
     }
 
 
+    @Override
+    public List<Optional<Product>> findAll() throws DatabaseException {
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_FIND_ALL);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            List<Optional<Product>> productsList = new ArrayList<>();
+
+            while (resultSet.next()) {
+                Optional<Product> product = Optional.ofNullable(buildProduct(resultSet));
+                productsList.add(product);
+            }
+            return productsList;
+        } catch (SQLException e) {
+            throw new DatabaseException("Error get all cards from database: " + e.getMessage());
+        }
+    }
+
     private Product buildProduct(ResultSet resultSet) throws DatabaseException {
         try {
             return Product.builder().id(resultSet.getInt("id"))
@@ -115,28 +132,6 @@ public class ProductDao implements DaoTemplate<Product> {
                     .build();
         } catch (SQLException e) {
             throw new DatabaseException("Error create product: ", e);
-        }
-    }
-
-    @Override
-    public List<Optional<Product>> findAll() throws DatabaseException {
-        try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.PRODUCT_FIND_ALL);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            List<Optional<Product>> productsList = new ArrayList<>();
-
-            while (resultSet.next()) {
-                Optional<Product> product = Optional.ofNullable(Product.builder()
-                        .id(resultSet.getInt("id"))
-                        .name(resultSet.getString("name"))
-                        .price(resultSet.getDouble("price"))
-                        .isDiscount(resultSet.getBoolean("discount"))
-                        .build());
-                productsList.add(product);
-            }
-            return productsList;
-        } catch (SQLException e) {
-            throw new DatabaseException("Error get all cards from database: " + e.getMessage());
         }
     }
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="db.changelog-master.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+<changeSet author="yayauheny" id="7">
+<sql>
+INSERT INTO company.users (name, email, password, role, discount_card)
+values ('Andrew Borssman', 'andrewb@gmail.com', 'admin','ADMIN', null),
+       ('Samantha Smith', 'samantha@gmail.com', 'samanta', 'USER', 1),
+       ('David Johnson', 'david.johnson@mail.ru', 'admin', 'ADMIN', null),
+       ('Emily Chen', 'emily.chen@mail.ru', 'emily', 'USER', 2),
+       ('Michael Davis', 'michael.davis@gmail.com', 'michael22', 'USER', 3),
+       ('Isabella Rodriguez', 'isabella.rodriguez@gmail.com', 'isabel2002','ADMIN', null)
+ON CONFLICT DO NOTHING;
+</sql>
+</changeSet>
+</databaseChangeLog>

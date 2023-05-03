@@ -3,18 +3,17 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet author="yayauheny" id="4">
-        <sql>
-            CREATE TABLE IF NOT EXISTS company.users
-            (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(124) NOT NULL,
-                email VARCHAR(124) UNIQUE NOT NULL,
-                password VARCHAR(32) NOT NULL,
-                role VARCHAR(32) NOT NULL,
-                discount_card INTEGER REFERENCES company.discount_card(id),
-                product_id INTEGER REFERENCES company.product(id)
-                );
-        </sql>
-    </changeSet>
-</databaseChangeLog>
+<changeSet author="yayauheny" id="4">
+<sql>
+    CREATE TABLE IF NOT EXISTS company.users
+    (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(124) NOT NULL,
+        email VARCHAR(124) NOT NULL UNIQUE,
+        password VARCHAR(32) NOT NULL,
+        role VARCHAR(32) NOT NULL,
+        discount_card INTEGER REFERENCES company.discount_card(id)
+        );
+</sql>
+</changeSet>
+        </databaseChangeLog>

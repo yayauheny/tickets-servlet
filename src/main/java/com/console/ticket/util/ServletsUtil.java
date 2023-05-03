@@ -59,7 +59,4 @@ public class ServletsUtil {
 
         return Integer.parseInt(parameter);
     }
-
-
-
 }

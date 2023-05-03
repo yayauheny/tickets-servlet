@@ -7,11 +7,12 @@ plugins {
 group 'com.console.ticket'
 version '1.0-SNAPSHOT'
 
-
-
-
 repositories {
     mavenCentral()
+}
+
+war {
+    duplicatesStrategy = 'EXCLUDE'
 }
 
 dependencies {
@@ -31,29 +32,21 @@ dependencies {
     compileOnly('jakarta.servlet:jakarta.servlet-api:5.0.0')
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    liquibaseRuntime 'org.liquibase:liquibase-core:4.8.0'
-    liquibaseRuntime 'org.postgresql:postgresql:42.5.1'
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.8.0'
+    liquibaseRuntime 'org.postgresql:postgresql:42.5.1'
+
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:2.0.0'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:2.0.0'
 }
+apply plugin: "org.liquibase.gradle"
 
 test {
     useJUnitPlatform()
 }
 
-task('deploy') {
-    liquibase {
-        activities {
-            main {
-                changeLogFile "src/main/resources/db.changelog/db.changelog-master.xml"
-                url "jdbc:postgresql://localhost:5432/postgres"
-                username "postgres"
-                password "root"
-            }
-        }
-    }
-}
-compileJava.dependsOn(update).dependsOn(deploy)
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"

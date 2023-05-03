@@ -56,4 +56,25 @@ public class SqlRequestsUtil {
                       VALUES (?, ?, ?, ?, ?)
                       
             """;
+    public static final String USER_UPDATE = """
+                      UPDATE company.users 
+                      SET name = ?,
+                          email = ?,
+                          password = ?,
+                          role = ?, 
+                          discount_card = ?  
+                      WHERE id = ?;
+            """;
+
+    public static final String USER_FIND = """
+            SELECT * FROM company.users WHERE id = ?;
+            """;
+
+    public static final String USER_DELETE = """
+            DELETE FROM company.users WHERE id = ?;
+            """;
+
+    public static final String USER_FIND_ALL = """
+            SELECT * FROM company.users;
+            """;
 }
