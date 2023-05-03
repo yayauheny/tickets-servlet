@@ -6,18 +6,22 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Registration</title>
 </head>
 <body>
-    <form action="/registry" method="post">
+<div class="registration_block">
+    <p>Заполните форму регистрации</p>
+
+    <c:if test="${not empty is_valid and !is_valid}">
+        <p style="color: red;">Ошибка при регистрации. Пожалуйста, заполните форму еще раз.</p>
+    </c:if>
+
+    <form class="registration_form" action="${pageContext.request.contextPath}/registration" method="post">
         <label>Имя:
             <input type="text" name="name">
-        </label><br>
-
-        <label>Адрес:
-            <input type="text" name="address">
         </label><br>
 
         <label>Почта:
@@ -27,11 +31,7 @@
         <label>Пароль
             <input type="password" name="password">
         </label><br>
-
-        <label>Номер скидочной карты
-            <input type="number" name="discountCard">
-        </label><br>
-
+        
         <label>Роль
             <select name="role">
                 <option value="ADMIN">Администратор</option>
@@ -39,7 +39,12 @@
             </select>
         </label>
 
+        <label>Номер скидочной карты
+            <input type="text" name="discount_card">
+        </label><br>
+        
         <button type="submit">Подтвердить</button>
     </form>
+</div>
 </body>
 </html>

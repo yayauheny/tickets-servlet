@@ -14,7 +14,7 @@
 </head>
 
 <body>
-<div class="auth_block" id="about_us_block">
+<div class="auth_block">
     <p>Для дальнейшей работы Вам необходимо зарегистрироваться или войти в аккаунт</p>
 
     <div class="auth_button">
