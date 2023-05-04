@@ -1,3 +1,38 @@
+header {
+    background-color: #f2f2f2;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav li {
+    margin: 0 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+nav a:hover {
+    color: #666;
+}
+
 body {
     font-family: sans-serif;
     margin: 0;
@@ -16,7 +51,9 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
     color: #4f4f4f; /* dark gray text color */
+    text-align: center; /* add this line to center the text */
 }
+
 
 .table {
     width: 100%;

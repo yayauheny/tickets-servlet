@@ -10,14 +10,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Users</title>
+    <title>Manage Users</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 <body>
+<jsp:include page="header-admin.jsp"/>
 
 <section class="container">
-    <h1 class="task-heading">Пользователи</h1>
+    <h1 class="task-heading">Список пользователей</h1>
 
     <table class="table">
         <thead>

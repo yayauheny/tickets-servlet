@@ -15,6 +15,8 @@
 </head>
 
 <body>
+<jsp:include page="header-admin.jsp"/>
+
 <header>
     <div class="head-content">
         <nav>

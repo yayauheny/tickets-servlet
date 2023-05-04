@@ -37,7 +37,7 @@ public class ServletsUtil {
             throw new NumberFormatException();
         }
 
-        return Boolean.getBoolean(parameter);
+        return parameter.equalsIgnoreCase("true");
     }
 
     public static double getDoubleParameterFromRequest(HttpServletRequest req, String paramName) throws NumberFormatException {
