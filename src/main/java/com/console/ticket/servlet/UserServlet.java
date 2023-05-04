@@ -4,6 +4,7 @@ import com.console.ticket.data.UserDao;
 import com.console.ticket.entity.User;
 import com.console.ticket.service.impl.UserServiceImpl;
 import com.console.ticket.util.JspHelper;
+import com.console.ticket.util.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,6 +31,18 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String methodParam = "";
+        if (!((methodParam = req.getParameter("_method")).isEmpty())) {
+            if (methodParam.equalsIgnoreCase("delete")) {
+                doDelete(req, resp);
+            }
+        }
+    }
 
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int userIdToDelete = ServletsUtil.getIntegerParameterFromReq(req, "user");
+        userService.delete(userIdToDelete);
+        doGet(req, resp);
     }
 }

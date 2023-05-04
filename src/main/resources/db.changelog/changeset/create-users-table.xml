@@ -12,7 +12,7 @@
         email VARCHAR(124) NOT NULL UNIQUE,
         password VARCHAR(32) NOT NULL,
         role VARCHAR(32) NOT NULL,
-        discount_card INTEGER REFERENCES company.discount_card(id)
+        discount_card INTEGER REFERENCES company.discount_card(id) ON DELETE CASCADE
         );
 </sql>
 </changeSet>

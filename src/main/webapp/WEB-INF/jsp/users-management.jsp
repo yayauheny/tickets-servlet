@@ -35,7 +35,7 @@
                         <td><c:out value="${user.role}"/></td>
                         <td><c:out value="${user.cardId}"/></td>
                         <td>
-                            <form action="/users/user=${user.id}" method="post">
+                            <form action="${pageContext.request.contextPath}/users?user=${user.id}&_method=delete" method="post">
                                 <input type="submit" class="btn-del" value="Удалить"/>
                             </form>
                         </td>

@@ -72,7 +72,7 @@ public class UserDao implements DaoTemplate<User> {
         boolean isDeleted;
 
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.CARD_DELETE)) {
+             var preparedStatement = connection.prepareStatement(SqlRequestsUtil.USER_DELETE)) {
             preparedStatement.setObject(1, id);
 
             isDeleted = (preparedStatement.executeUpdate() > 0);
