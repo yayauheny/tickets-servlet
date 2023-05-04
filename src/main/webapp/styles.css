@@ -79,7 +79,7 @@ body {
     max-width: 100px; /* decrease the maximum width */
 }
 
-.table td:nth-child(6) { /* selects the last th element (Действие column) */
+.table td:last-child { /* selects the last th element (Действие column) */
     min-width: 220px; /* increase the minimum width */
     max-width: 400px;
 }
