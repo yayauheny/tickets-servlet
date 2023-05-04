@@ -2,6 +2,7 @@ body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f4; /* light gray background color */
 }
 
 .container {
@@ -14,6 +15,7 @@ body {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
+    color: #4f4f4f; /* dark gray text color */
 }
 
 .table {
@@ -31,7 +33,20 @@ body {
     text-align: left;
     white-space: nowrap;
     min-width: 100px;
+    background-color: #64a9af; /* light blue background color for table headers */
+    color: white;
 }
+
+.table th:nth-child(1){ /* selects the first th element (id column) */
+    min-width: 50px; /* decrease the minimum width */
+    max-width: 100px; /* decrease the maximum width */
+}
+
+.table td:nth-child(6) { /* selects the last th element (Действие column) */
+    min-width: 220px; /* increase the minimum width */
+    max-width: 400px;
+}
+
 
 .table td {
     text-align: left;
@@ -40,7 +55,17 @@ body {
 }
 
 .btn-del {
-    background-color: lightskyblue;
+    background-color: #a12d2d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.btn-refactor:hover {
+    background-color: #14962c; /* darker shade of blue on hover */
+}.btn-refactor {
+    background-color: #14962c;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -48,5 +73,11 @@ body {
 }
 
 .btn-del:hover {
-    background-color: #64a9af;
+    background-color: #a23c3c; /* darker shade of blue on hover */
+}
+
+.discount-input {
+    width: 150px;
+    border: 1px solid #ccc;
+    padding: 8px;
 }

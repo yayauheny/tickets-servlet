@@ -7,16 +7,20 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
+    <meta charset="UTF-8">
     <title>Users</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 <body>
 
-<div class="container">
-    <div class="task-heading">Статистика</div>
+<section class="container">
+    <h1 class="task-heading">Пользователи</h1>
+
     <table class="table">
+        <thead>
         <tr>
             <th>ID</th>
             <th>Имя</th>
@@ -25,26 +29,60 @@
             <th>Скидочная карта</th>
             <th>Действие</th>
         </tr>
-        <div class="container">
-            <table class="table">
-                <c:forEach items="${users}" var="user">
-                    <tr>
-                        <td><c:out value="${user.id}"/></td>
-                        <td><c:out value="${user.name}"/></td>
-                        <td><c:out value="${user.email}"/></td>
-                        <td><c:out value="${user.role}"/></td>
-                        <td><c:out value="${user.cardId}"/></td>
-                        <td>
-                            <form action="${pageContext.request.contextPath}/users?user=${user.id}&_method=delete" method="post">
-                                <input type="submit" class="btn-del" value="Удалить"/>
-                            </form>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
+        </thead>
+        <tbody>
+        <c:forEach items="${users}" var="user">
+            <tr>
+                <td><c:out value="${user.id}"/></td>
+                <td><c:out value="${user.name}"/></td>
+                <td><c:out value="${user.email}"/></td>
+                <td><c:out value="${user.role}"/></td>
+                <td><c:out value="${user.cardId}"/></td>
+                <td>
+                    <div class="admin-options">
+                        <form class="delete-option"
+                              action="${pageContext.request.contextPath}/users?user-id=${user.id}&_method=delete"
+                              method="post">
+                            <button type="submit" class="btn-del">Удалить</button>
+                        </form>
+
+                        <form class="change-option"
+                              action="${pageContext.request.contextPath}/users?user-id=${user.id}&_method=put"
+                              method="post">
+                            <div class="form-group">
+                                <input type="hidden" name="password" value="${user.password}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Имя:</label>
+                                <input type="text" id="name" name="name" value="${user.name}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Почта:</label>
+                                <input type="email" id="email" name="email" value="${user.email}"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="role">Роль:</label>
+                                <select id="role" name="role">
+                                    <option value="ADMIN" ${user.role == 'ADMIN' ? 'selected' : ''}>Администратор
+                                    </option>
+                                    <option value="USER" ${user.role == 'USER' ? 'selected' : ''}>Покупатель</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="discount-card">Номер скидочной карты:</label>
+                                <input type="text" id="discount-card" name="discount_card" size="8"
+                                       value="${user.cardId}"
+                                       class="discount-input"/>
+                            </div>
+                            <button type="submit" class="btn-refactor">Изменить</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </c:forEach>
+        </tbody>
     </table>
-</div>
+</section>
 
 </body>
 </html>
