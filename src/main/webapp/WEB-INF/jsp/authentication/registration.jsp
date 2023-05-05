@@ -10,6 +10,7 @@
 <html>
 <head>
     <title>Registration</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 <body>
 <div class="registration_block">
@@ -31,7 +32,7 @@
         <label>Пароль
             <input type="password" name="password">
         </label><br>
-        
+
         <label>Роль
             <select name="role">
                 <option value="ADMIN">Администратор</option>
@@ -42,7 +43,7 @@
         <label>Номер скидочной карты
             <input type="text" name="discount_card">
         </label><br>
-        
+
         <button type="submit">Зарегистрироваться</button>
     </form>
 </div>

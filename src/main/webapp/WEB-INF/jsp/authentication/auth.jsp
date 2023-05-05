@@ -11,11 +11,12 @@
 <html>
 <head>
     <title>Tickets</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 
 <body>
 <div class="auth_block">
-    <p>Для дальнейшей работы Вам необходимо зарегистрироваться или войти в аккаунт</p>
+    <p>Для дальнейшей работы необходимо пройти авторизацию</p>
 
     <div class="buttons">
         <div><a href="${pageContext.request.contextPath}/registration">

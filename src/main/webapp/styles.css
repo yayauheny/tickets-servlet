@@ -11,6 +11,212 @@ header {
     margin: 0 auto;
 }
 
+.page-message {
+    background-color: #76c5e8;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin-top: 35px;
+    margin-left: 400px;
+    margin-right: 400px;
+    text-align: center;
+}
+
+.auth_block {
+    background-color: #76c5e8;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin: 35px auto 0;
+    text-align: center;
+    width: 60%;
+}
+
+.auth_block p {
+    margin-bottom: 20px;
+}
+
+.auth_block .buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.auth_block .buttons button {
+    background-color: #4b616b;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 0 10px;
+    padding: 10px 20px;
+    transition: all 0.2s ease-in-out;
+}
+
+.auth_block .buttons button:hover {
+    background-color: #6b8a94;
+}
+
+.auth_block button:hover {
+    background-color: #ddd;
+}
+
+.login_block {
+    background-color: #76c5e8;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin: 50px auto 0;
+    text-align: center;
+    max-width: 500px;
+}
+
+.login_block p {
+    margin: 0 0 10px;
+}
+
+.login_form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.login_form input[type="email"], .login_form input[type="password"] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.login_form button[type="submit"] {
+    background-color: #4b616b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login_form button[type="submit"]:hover {
+    background-color: #3d4f57;
+}
+
+.exception_block {
+    background-color: #f9d6d5;
+    border: 2px solid #e86d6d;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin: 50px auto 0;
+    text-align: center;
+    max-width: 500px;
+}
+
+.exception_block p {
+    margin: 0 0 10px;
+    color: #e86d6d;
+}
+
+.login_block {
+    background-color: #76c5e8;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin: 50px auto 0;
+    text-align: center;
+    max-width: 500px;
+}
+
+.login_block p {
+    margin: 0 0 10px;
+}
+
+.login_form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.login_form input[type="email"], .login_form input[type="password"] {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.login_form button[type="submit"] {
+    background-color: #4b616b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login_form button[type="submit"]:hover {
+    background-color: #3d4f57;
+}
+
+.registration_block {
+    background-color: #76c5e8;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 0px 5px #ddd;
+    padding: 20px;
+    margin: 50px auto 0;
+    text-align: center; /* Add text-align center to center the p element */
+    max-width: 360px;
+}
+
+.registration_block p {
+    margin: 0 0 10px;
+    display: inline-block; /* Add display inline-block to center the p element */
+}
+
+.registration_form {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.registration_form label {
+    text-align: left;
+    grid-column: 1;
+}
+
+.registration_form input[type="text"],
+.registration_form input[type="email"],
+.registration_form input[type="password"],
+.registration_form select,
+.registration_form input[type="number"] {
+    grid-column: 2;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 100%;
+}
+
+.registration_form button[type="submit"] {
+    background-color: #4b616b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.registration_form button[type="submit"]:hover {
+    background-color: #3d4f57;
+}
+
+
 nav ul {
     list-style-type: none;
     margin: 0;
@@ -58,6 +264,7 @@ body {
 .table {
     width: 100%;
     border-collapse: collapse;
+    border-radius: 20px;
 }
 
 .table th,
@@ -70,11 +277,11 @@ body {
     text-align: left;
     white-space: nowrap;
     min-width: 100px;
-    background-color: #64a9af; /* light blue background color for table headers */
+    background-color: #76c5e8; /* light blue background color for table headers */
     color: white;
 }
 
-.table th:nth-child(1){ /* selects the first th element (id column) */
+.table th:nth-child(1) { /* selects the first th element (id column) */
     min-width: 50px; /* decrease the minimum width */
     max-width: 100px; /* decrease the maximum width */
 }
@@ -101,14 +308,17 @@ body {
 
 .btn-refactor:hover {
     background-color: #14962c; /* darker shade of blue on hover */
-}.btn-refactor{
+}
+
+.btn-refactor {
     background-color: #14962c;
     color: white;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
 }
-.btn-buy{
+
+.btn-buy {
     background-color: #e7e048;
     color: black;
     border: none;

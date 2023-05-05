@@ -10,6 +10,7 @@
 <html>
 <head>
     <title>Registration</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 <body>
 <div class="login_block">
