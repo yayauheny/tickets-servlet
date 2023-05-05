@@ -25,7 +25,7 @@
             <th>ID</th>
             <th>Наименование</th>
             <th>Количество</th>
-            <th>Цена (${currency})</th>
+            <th>Цена (${sessionScope.currency})</th>
             <th>Наличие скидки</th>
             <th>Действия</th>
         </tr>

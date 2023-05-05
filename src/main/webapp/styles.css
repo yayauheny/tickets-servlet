@@ -101,9 +101,16 @@ body {
 
 .btn-refactor:hover {
     background-color: #14962c; /* darker shade of blue on hover */
-}.btn-refactor {
+}.btn-refactor{
     background-color: #14962c;
     color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.btn-buy{
+    background-color: #e7e048;
+    color: black;
     border: none;
     padding: 5px 10px;
     cursor: pointer;

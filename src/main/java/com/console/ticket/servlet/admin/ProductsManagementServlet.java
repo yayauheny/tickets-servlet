@@ -1,4 +1,4 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.admin;
 
 import com.console.ticket.data.ProductDao;
 import com.console.ticket.entity.Company;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @WebServlet("/products")
-public class ProductServlet extends HttpServlet {
+public class ProductsManagementServlet extends HttpServlet {
     private static final Company companyEvroopt = new Company(
             "Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
     private static final ProductDao productDao = ProductDao.getInstance();
@@ -40,7 +40,7 @@ public class ProductServlet extends HttpServlet {
         req.setAttribute("products", products);
         req.setAttribute("currency", companyEvroopt.getCurrency());
 
-        req.getRequestDispatcher(JspHelper.getPath("products-management"))
+        req.getRequestDispatcher(JspHelper.getPath("admin", "products-management"))
                 .forward(req, resp);
     }
 

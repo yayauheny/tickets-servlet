@@ -20,6 +20,9 @@ To change this template use File | Settings | File Templates.
                 <li>
                     <a href="${pageContext.request.contextPath}/products">Products</a>
                 </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/auth">Authorization</a>
+                </li>
             </ul>
         </nav>
     </div>

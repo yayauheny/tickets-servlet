@@ -1,6 +1,8 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.authentication;
 
 import com.console.ticket.data.UserDao;
+import com.console.ticket.entity.Company;
+import com.console.ticket.entity.Currency;
 import com.console.ticket.entity.User;
 import com.console.ticket.service.impl.UserServiceImpl;
 import com.console.ticket.util.JspHelper;
@@ -10,18 +12,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+
+    private static final Company companyEvroopt = new Company(
+            "Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
     private static final UserDao userDao = UserDao.getInstance();
     private static final UserServiceImpl userService = new UserServiceImpl(userDao);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher(JspHelper.getPath("login")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.getPath("authentication", "login")).forward(req, resp);
     }
 
     @Override
@@ -42,29 +48,24 @@ public class LoginServlet extends HttpServlet {
 
     private void setAttrUserNotExistsAndForwardReq(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("userExists", Boolean.FALSE);
-        req.getRequestDispatcher(JspHelper.getPath("login")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.getPath("authentication", "login")).forward(req, resp);
     }
 
     private void setAttrInvalidPasswordOrForwardReq(User user, boolean isPasswordValid, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!isPasswordValid) {
             req.setAttribute("invalidPassword", Boolean.TRUE);
-            req.getRequestDispatcher(JspHelper.getPath("login")).forward(req, resp);
+            req.getRequestDispatcher(JspHelper.getPath("authentication", "login")).forward(req, resp);
         } else {
             forwardToUserOrAdminPage(user, req, resp);
         }
     }
 
-    private void forwardToUserOrAdminPage(User user, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        switch (user.getRole()) {
-            case ADMIN: {
-                req.getRequestDispatcher(JspHelper.getPath("admin-actions")).forward(req, resp);
-                break;
-            }
-            case USER: {
-                req.getRequestDispatcher(JspHelper.getPath("user-actions")).forward(req, resp);
-                break;
-            }
-        }
+    private void forwardToUserOrAdminPage(User currentUser, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession currentSession = req.getSession();
+        currentSession.setAttribute("cardId", currentUser.getCardId());
+        currentSession.setAttribute("currency", companyEvroopt.getCurrency());
+
+        ServletsUtil.forwardToPageByRole(req, resp, currentUser);
     }
 
     private boolean verifyUserPassword(User user, String password) {

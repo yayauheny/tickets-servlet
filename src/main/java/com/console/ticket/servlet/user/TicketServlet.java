@@ -1,4 +1,4 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.user;
 
 import com.console.ticket.constants.Constants;
 import com.console.ticket.data.CardDao;
@@ -41,16 +41,7 @@ public class TicketServlet extends HttpServlet {
             "Evroopt", "Minsk, Kalvariyskaja 17, 1", Currency.USA.getCurrency());
     private static final CardServiceImpl cardService = new CardServiceImpl(CardDao.getInstance());
     private static final ProductServiceImpl productService = new ProductServiceImpl(ProductDao.getInstance());
-
     private static final String DEFAULT_EXCEPTION_MESSAGE = "Exception build ticket: ";
-
-//    static {
-//        try {
-//            DriverManager.registerDriver(new org.postgresql.Driver());
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
-//    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -88,7 +79,12 @@ public class TicketServlet extends HttpServlet {
         }
     }
 
-    private void writePdfFileToResponse(HttpServletResponse resp,ServletOutputStream outputStream, File ticketPdf) throws IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
+    private void writePdfFileToResponse(HttpServletResponse resp, ServletOutputStream outputStream, File ticketPdf) throws IOException {
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         ServletsUtil.configureResponse(resp, HTTP_CONTENT_TYPE_PDF, HTTP_STATUS_OK);
 
@@ -124,6 +120,7 @@ public class TicketServlet extends HttpServlet {
         return products;
     }
 
+    //get min value (products or quantity params) and get first (min) elements with productId and quantity
     private void deleteInvalidProductsFromReq(List<Integer> idList, List<Integer> quantityList) {
         int productsWithQuantity = Math.min(idList.size(), quantityList.size());
 

@@ -10,15 +10,15 @@
 
 <html>
 <head>
-    <title>Administrator</title>
+    <title>User</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 
 <body>
-<jsp:include page="header-admin.jsp"/>
+<jsp:include page="header-user.jsp"/>
 
 <div class="page-message">
-    <p>Администратор, добро пожаловать в систему
+    <p>Уважаемый покупатель, добро пожаловать в систему
         Перечень доступных операций доступен по ссылкам в оглавлении
     </p>
 </div>

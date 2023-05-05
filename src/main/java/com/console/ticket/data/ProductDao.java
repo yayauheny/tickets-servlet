@@ -129,6 +129,7 @@ public class ProductDao implements DaoTemplate<Product> {
                     .name(resultSet.getString("name"))
                     .price(resultSet.getDouble("price"))
                     .isDiscount(resultSet.getBoolean("discount"))
+                    .quantity(resultSet.getInt("quantity"))
                     .build();
         } catch (SQLException e) {
             throw new DatabaseException("Error create product: ", e);

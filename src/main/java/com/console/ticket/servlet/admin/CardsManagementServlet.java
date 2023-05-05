@@ -1,4 +1,4 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.admin;
 
 import com.console.ticket.data.CardDao;
 import com.console.ticket.entity.Card;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @WebServlet("/cards")
-public class CardServlet extends HttpServlet {
+public class CardsManagementServlet extends HttpServlet {
 
     private static final CardDao cardDao = CardDao.getInstance();
     private static final CardServiceImpl cardService = new CardServiceImpl(cardDao);
@@ -36,7 +36,7 @@ public class CardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("cards", cards);
 
-        req.getRequestDispatcher(JspHelper.getPath("cards-management"))
+        req.getRequestDispatcher(JspHelper.getPath("admin", "cards-management"))
                 .forward(req, resp);
     }
 

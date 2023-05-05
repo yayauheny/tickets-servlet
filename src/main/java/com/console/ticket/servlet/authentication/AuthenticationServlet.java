@@ -1,4 +1,4 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.authentication;
 
 import com.console.ticket.data.UserDao;
 import com.console.ticket.service.impl.UserServiceImpl;
@@ -21,6 +21,6 @@ public class AuthenticationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher(JspHelper.getPath("auth")).forward(req, resp);
+        req.getRequestDispatcher(JspHelper.getPath("authentication", "auth")).forward(req, resp);
     }
 }

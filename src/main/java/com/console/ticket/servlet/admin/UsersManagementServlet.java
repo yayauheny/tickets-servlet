@@ -1,13 +1,11 @@
-package com.console.ticket.servlet;
+package com.console.ticket.servlet.admin;
 
 import com.console.ticket.data.UserDao;
-import com.console.ticket.entity.Product;
 import com.console.ticket.entity.Role;
 import com.console.ticket.entity.User;
 import com.console.ticket.service.impl.UserServiceImpl;
 import com.console.ticket.util.JspHelper;
 import com.console.ticket.util.ServletsUtil;
-import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @WebServlet("/users")
-public class UserServlet extends HttpServlet {
+public class UsersManagementServlet extends HttpServlet {
     private static final UserDao userDao = UserDao.getInstance();
     private static final UserServiceImpl userService = new UserServiceImpl(userDao);
 
@@ -38,7 +36,7 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("users", users);
 
-        req.getRequestDispatcher(JspHelper.getPath("users-management"))
+        req.getRequestDispatcher(JspHelper.getPath("admin", "users-management"))
                 .forward(req, resp);
     }
 
